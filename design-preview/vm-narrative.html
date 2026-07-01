@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Narrative section preview — card deck, one fix at a time</title>
+<title>Narrative section preview — bold horizontal slider</title>
 <style>
   :root {
     --ink: #111111;
@@ -36,93 +36,138 @@
   }
 
   /* ================= STORY SECTION ================= */
-  .story-wrap { position: relative; height: 600vh; }
+  .story-wrap { position: relative; height: 520vh; }
   .story-pin {
     position: sticky; top: 0; height: 100vh;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     overflow: hidden; background: #fff;
   }
 
-  .alert-pill {
-    position: absolute; top: 40px; right: 48px; z-index: 50;
-    display: flex; align-items: center; gap: 8px;
-    border: 1px solid var(--line); border-radius: 20px; padding: 7px 14px 7px 10px;
-    font-family: 'SFMono-Regular', Menlo, monospace; font-size: 12px; color: var(--sub);
-    white-space: nowrap; background: #fff;
+  .slider-head {
+    width: 100%; max-width: 1120px; padding: 0 5vw; margin-bottom: 22px;
+    display: flex; justify-content: space-between; align-items: flex-end;
   }
-  .alert-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink); transition: background 0.3s ease; }
-  .alert-pill.resolved .dot { background: #b9e3c6; }
-  .alert-pill .num { color: var(--ink); font-weight: 600; }
+  .slider-eyebrow {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--faint); font-family: 'SFMono-Regular', Menlo, monospace;
+  }
+  .slider-count { font-size: 12px; color: var(--faint); font-family: 'SFMono-Regular', Menlo, monospace; }
+  .slider-count b { color: var(--ink); }
 
-  .deck { position: relative; width: 100%; max-width: 760px; height: 62vh; min-height: 440px; margin: 0 48px; }
-  .card {
-    position: absolute; inset: 0;
-    border: 1px solid var(--line); border-radius: 10px; background: #fff;
-    padding: 40px 44px;
-    will-change: transform, opacity;
+  .slider-stage { width: 100%; overflow: hidden; padding: 4px 0; }
+  .slider-track { display: flex; gap: 32px; padding-left: 5vw; will-change: transform; }
+
+  .panel {
+    flex: 0 0 auto; width: min(720px, 80vw); height: 64vh; min-height: 460px;
+    border: 1px solid var(--line); border-radius: 16px; background: #fff;
+    padding: 48px 52px; position: relative; overflow: hidden;
     display: flex; flex-direction: column;
+    transition: border-color 0.4s ease;
   }
-  .card.in-view { box-shadow: 0 16px 40px rgba(0,0,0,0.06); }
+  .panel.active { border-color: #d8d8d8; }
 
-  .card-kicker {
-    font-size: 11.5px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
-    color: var(--faint); margin: 0 0 14px; font-family: 'SFMono-Regular', Menlo, monospace;
-    display: flex; align-items: center; gap: 10px;
+  .panel-watermark {
+    position: absolute; right: -14px; bottom: -54px;
+    font-size: clamp(160px, 24vw, 240px); font-weight: 800; line-height: 1;
+    color: #000; opacity: 0.045; pointer-events: none; user-select: none;
+    font-family: 'Inter', sans-serif; letter-spacing: -0.05em;
   }
-  .card-kicker .fnum {
+
+  .panel-icon { width: 60px; height: 60px; margin-bottom: 30px; flex-shrink: 0; }
+  .panel-icon path, .panel-icon circle, .panel-icon polyline, .panel-icon rect {
+    fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 420; stroke-dashoffset: 420; transition: stroke-dashoffset 1s cubic-bezier(.2,.7,.3,1);
+  }
+  .panel.visited .panel-icon path,
+  .panel.visited .panel-icon circle,
+  .panel.visited .panel-icon polyline,
+  .panel.visited .panel-icon rect { stroke-dashoffset: 0; }
+
+  .panel-kicker { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .panel-kicker .fnum {
     display: inline-flex; align-items: center; justify-content: center;
-    width: 20px; height: 20px; border: 1px solid var(--ink); border-radius: 50%;
-    font-size: 10.5px; font-weight: 700; color: var(--ink);
+    width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #fff;
+    font-size: 11px; font-weight: 700; font-family: 'SFMono-Regular', Menlo, monospace;
   }
-  .card-title { font-size: clamp(24px, 2.6vw, 30px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; margin: 0 0 12px; }
-  .card-sub { font-size: 14.5px; color: var(--sub); line-height: 1.6; margin: 0 0 28px; max-width: 520px; }
+  .panel-kicker .ftext {
+    font-size: 11.5px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--faint);
+    font-family: 'SFMono-Regular', Menlo, monospace;
+  }
 
-  /* intro: full chip board */
-  .chip-board { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; flex: 1; }
+  .panel-title {
+    font-size: clamp(26px, 3vw, 36px); font-weight: 700; letter-spacing: -0.025em;
+    line-height: 1.14; margin: 0 0 14px; max-width: 92%;
+    opacity: 0; transform: translateY(14px); transition: opacity 0.55s ease 0.05s, transform 0.55s ease 0.05s;
+  }
+  .panel.visited .panel-title { opacity: 1; transform: translateY(0); }
+
+  .panel-desc {
+    font-size: 15px; color: var(--sub); line-height: 1.65; max-width: 440px; margin: 0;
+    opacity: 0; transform: translateY(10px); transition: opacity 0.55s ease 0.15s, transform 0.55s ease 0.15s;
+  }
+  .panel.visited .panel-desc { opacity: 1; transform: translateY(0); }
+
+  .status-bar { display: flex; align-items: center; max-width: 420px; margin-top: 30px; }
+  .status-before {
+    flex: 1; height: 3px;
+    background-image: repeating-linear-gradient(90deg, #ccc 0 6px, transparent 6px 12px);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.6s ease 0.2s;
+  }
+  .status-marker {
+    width: 9px; height: 9px; border-radius: 50%; background: var(--ink);
+    flex-shrink: 0; margin: 0 -1px; box-shadow: 0 0 0 4px #fff;
+    transform: scale(0); transition: transform 0.3s ease 0.55s;
+  }
+  .status-after {
+    flex: 1.5; height: 3px; background: var(--ink);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.6s ease 0.65s;
+  }
+  .panel.visited .status-before,
+  .panel.visited .status-after { transform: scaleX(1); }
+  .panel.visited .status-marker { transform: scale(1); }
+  .status-labels { display: flex; max-width: 420px; justify-content: space-between; margin-top: 8px; }
+  .status-labels span { font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); font-family: 'SFMono-Regular', Menlo, monospace; }
+
+  .resolve-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 20px; }
+  .resolve-tags span {
+    font-size: 10.5px; color: var(--faint); border: 1px solid var(--line); border-radius: 3px;
+    padding: 3px 8px; font-family: 'SFMono-Regular', Menlo, monospace;
+  }
+
+  /* hero panels (intro / outro) */
+  .panel-hero-num {
+    font-size: clamp(96px, 11vw, 148px); font-weight: 800; letter-spacing: -0.04em; line-height: 1;
+    margin: 0 0 4px;
+  }
+  .panel-hero-label { font-size: 14px; color: var(--sub); margin: 0 0 24px; }
+  .chip-board { display: flex; flex-wrap: wrap; gap: 7px; align-content: flex-start; }
   .chip {
-    border: 1px solid var(--line); border-radius: 4px; padding: 6px 11px;
-    font-family: 'SFMono-Regular', Menlo, monospace; font-size: 12px; color: var(--sub);
+    border: 1px solid var(--line); border-radius: 4px; padding: 5px 9px;
+    font-family: 'SFMono-Regular', Menlo, monospace; font-size: 11px; color: var(--sub);
   }
   .chip.primary { color: var(--ink); font-weight: 600; border-color: #d5d5d5; }
 
-  /* fix cards: before / arrow / after */
-  .fix-body { display: flex; align-items: stretch; gap: 22px; flex: 1; }
-  .fix-before { flex: 0 0 34%; display: flex; flex-direction: column; gap: 8px; }
-  .fix-before .col-label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); font-family: 'SFMono-Regular', Menlo, monospace; margin-bottom: 4px; }
-  .fix-before .chip { border-style: dashed; }
-  .fix-arrow { flex: 0 0 40px; display: flex; align-items: center; justify-content: center; color: var(--faint); font-size: 20px; }
-  .fix-after { flex: 1; display: flex; flex-direction: column; }
-  .fix-after .col-label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); font-family: 'SFMono-Regular', Menlo, monospace; margin-bottom: 8px; }
-  .fix-after h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 10px; line-height: 1.35; }
-  .fix-after p { font-size: 14px; color: var(--sub); line-height: 1.65; margin: 0; }
-
-  /* outro: recap */
-  .recap-list { display: flex; flex-direction: column; flex: 1; justify-content: center; gap: 4px; }
+  .recap-list { display: flex; flex-direction: column; gap: 0; margin-top: 6px; }
   .recap-item {
-    display: flex; align-items: center; gap: 12px; padding: 14px 0;
-    border-top: 1px solid var(--line); font-size: 15px; color: var(--ink); font-weight: 500;
+    display: flex; align-items: center; gap: 12px; padding: 12px 0;
+    border-top: 1px solid var(--line); font-size: 14px; color: var(--ink); font-weight: 500;
   }
   .recap-item:last-child { border-bottom: 1px solid var(--line); }
   .recap-check {
-    width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--ink);
-    display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0;
+    width: 17px; height: 17px; border-radius: 50%; background: var(--ink); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 9px; flex-shrink: 0;
   }
 
-  /* nav dots */
-  .deck-nav {
-    display: flex; gap: 22px; margin-top: 22px; z-index: 30;
+  /* nav */
+  .slider-nav { display: flex; gap: 10px; margin-top: 26px; }
+  .slider-dot {
+    width: 34px; height: 3px; background: var(--line); border: none; cursor: pointer;
+    padding: 0; transition: background 0.3s ease;
   }
-  .deck-dot {
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
-    cursor: pointer; background: none; border: none; padding: 4px; font-family: 'SFMono-Regular', Menlo, monospace;
-  }
-  .deck-dot .num { font-size: 10px; color: var(--faint); transition: color 0.25s ease; }
-  .deck-dot .bar { width: 22px; height: 2px; background: var(--line); transition: background 0.25s ease; }
-  .deck-dot.active .num { color: var(--ink); font-weight: 700; }
-  .deck-dot.active .bar { background: var(--ink); }
+  .slider-dot.active { background: var(--ink); }
 
   .hint {
-    position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
     font-size: 11px; color: var(--faint); font-family: 'SFMono-Regular', Menlo, monospace;
     letter-spacing: 0.03em; text-transform: uppercase; opacity: 0.8; transition: opacity 0.3s ease;
   }
@@ -141,136 +186,126 @@
   <div class="story-wrap" id="storyWrap">
     <div class="story-pin">
 
-      <div class="alert-pill" id="alertPill">
-        <span class="dot"></span>
-        <span><span class="num" id="alertNum">16</span> unresolved</span>
+      <div class="slider-head">
+        <span class="slider-eyebrow">3am → shipped</span>
+        <span class="slider-count"><b id="slideNum">01</b> / 06</span>
       </div>
 
-      <div class="deck" id="deck">
+      <div class="slider-stage">
+        <div class="slider-track" id="track">
 
-        <!-- CARD 0 — intro -->
-        <div class="card" data-idx="0">
-          <p class="card-kicker">00 — the pager at 3am</p>
-          <h2 class="card-title">Sixteen alerts. One root cause.</h2>
-          <p class="card-sub">Different symptoms, same fragile design. Scroll through what actually got fixed — one incident at a time.</p>
-          <div class="chip-board">
-            <div class="chip primary">CrashLoopBackOff</div>
-            <div class="chip primary">OOMKilled</div>
-            <div class="chip primary">502 Bad Gateway</div>
-            <div class="chip primary">NodeNotReady</div>
-            <div class="chip">ImagePullBackOff</div>
-            <div class="chip">FailedMount</div>
-            <div class="chip">FailedScheduling</div>
-            <div class="chip">No Healthy Upstream</div>
-            <div class="chip">DNS SERVFAIL</div>
-            <div class="chip">Connection Refused</div>
-            <div class="chip">Connection Reset</div>
-            <div class="chip">DiskPressure</div>
-            <div class="chip">504 Gateway Timeout</div>
-            <div class="chip">Context Deadline Exceeded</div>
-            <div class="chip">Lambda Timeout</div>
-            <div class="chip">ThrottlingException</div>
-          </div>
-        </div>
-
-        <!-- CARD 1 — fix 01 -->
-        <div class="card" data-idx="1">
-          <p class="card-kicker"><span class="fnum">1</span>configuration &amp; delivery</p>
-          <div class="fix-body">
-            <div class="fix-before">
-              <div class="col-label">before</div>
-              <div class="chip">CrashLoopBackOff</div>
+          <!-- PANEL 0 — intro -->
+          <div class="panel" data-idx="0">
+            <div class="panel-watermark">00</div>
+            <h2 class="panel-hero-num" id="heroNum">16</h2>
+            <p class="panel-hero-label">unresolved alerts, same production system</p>
+            <p class="panel-desc" style="margin-bottom:22px;">Different symptoms, same fragile design. Scroll — each panel is one incident, and the fix that shipped for it.</p>
+            <div class="chip-board">
+              <div class="chip primary">CrashLoopBackOff</div>
+              <div class="chip primary">OOMKilled</div>
+              <div class="chip primary">502 Bad Gateway</div>
+              <div class="chip primary">NodeNotReady</div>
               <div class="chip">ImagePullBackOff</div>
-              <div class="chip">FailedScheduling</div>
-              <div class="chip">NodeNotReady</div>
-              <div class="chip">OOMKilled</div>
-              <div class="chip">502 Bad Gateway</div>
-            </div>
-            <div class="fix-arrow">→</div>
-            <div class="fix-after">
-              <div class="col-label">after</div>
-              <h3>GitOps + Kustomize replaced hand-applied manifests</h3>
-              <p>ArgoCD auto-syncs from Git; Kustomize overlays keep dev/stg/prod thin and consistent instead of forked YAML. EKS runs across 3 AZs with real readiness and liveness probes.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- CARD 2 — fix 02 -->
-        <div class="card" data-idx="2">
-          <p class="card-kicker"><span class="fnum">2</span>cost-aware compute</p>
-          <div class="fix-body">
-            <div class="fix-before">
-              <div class="col-label">before</div>
-              <div class="chip">Lambda Timeout</div>
-              <div class="chip">Context Deadline Exceeded</div>
-              <div class="chip">ThrottlingException</div>
-              <div class="chip">504 Gateway Timeout</div>
-            </div>
-            <div class="fix-arrow">→</div>
-            <div class="fix-after">
-              <div class="col-label">after</div>
-              <h3>Lambda scans hourly, partitioned by key</h3>
-              <p>The function scanned the entire table every run. Repartitioning by key and scanning hourly instead of every 24 hours cut execution time and cost together — and the timeout cascade stopped.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- CARD 3 — fix 03 -->
-        <div class="card" data-idx="3">
-          <p class="card-kicker"><span class="fnum">3</span>test isolation</p>
-          <div class="fix-body">
-            <div class="fix-before">
-              <div class="col-label">before</div>
               <div class="chip">FailedMount</div>
-              <div class="chip">DiskPressure</div>
-            </div>
-            <div class="fix-arrow">→</div>
-            <div class="fix-after">
-              <div class="col-label">after</div>
-              <h3>Ephemeral pods, wiped after every test run</h3>
-              <p>Unit tests spin up their own pod and PVC — both destroyed and the storage wiped the moment the suite finishes. Nothing accumulates between runs anymore.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- CARD 4 — fix 04 -->
-        <div class="card" data-idx="4">
-          <p class="card-kicker"><span class="fnum">4</span>observability</p>
-          <div class="fix-body">
-            <div class="fix-before">
-              <div class="col-label">before</div>
+              <div class="chip">FailedScheduling</div>
               <div class="chip">No Healthy Upstream</div>
               <div class="chip">DNS SERVFAIL</div>
               <div class="chip">Connection Refused</div>
               <div class="chip">Connection Reset</div>
-            </div>
-            <div class="fix-arrow">→</div>
-            <div class="fix-after">
-              <div class="col-label">after</div>
-              <h3>One Grafana stack instead of eleven terminals</h3>
-              <p>OTEL ships traces and metrics from every service into a Grafana stack deployed once, in a hardened monitoring VM — instead of SSHing into whichever box happens to be on fire.</p>
+              <div class="chip">DiskPressure</div>
+              <div class="chip">504 Gateway Timeout</div>
+              <div class="chip">Context Deadline Exceeded</div>
+              <div class="chip">Lambda Timeout</div>
+              <div class="chip">ThrottlingException</div>
             </div>
           </div>
-        </div>
 
-        <!-- CARD 5 — outro -->
-        <div class="card" data-idx="5">
-          <p class="card-kicker">05 — shipped</p>
-          <h2 class="card-title">Sixteen alerts became zero.</h2>
-          <p class="card-sub">Same production traffic. Four changes.</p>
-          <div class="recap-list">
-            <div class="recap-item"><span class="recap-check">✓</span>GitOps + Kustomize — config drift and bad rollouts gone</div>
-            <div class="recap-item"><span class="recap-check">✓</span>Hourly, partitioned Lambda scans — cost and timeouts down together</div>
-            <div class="recap-item"><span class="recap-check">✓</span>Ephemeral test pods — nothing left behind between runs</div>
-            <div class="recap-item"><span class="recap-check">✓</span>Centralized Grafana — one dashboard, not eleven terminals</div>
+          <!-- PANEL 1 — fix 01 -->
+          <div class="panel" data-idx="1">
+            <div class="panel-watermark">01</div>
+            <svg class="panel-icon" viewBox="0 0 60 60">
+              <path d="M12 22 A18 18 0 0 1 46 15" />
+              <path d="M46 15 L46 6 M46 15 L38 12" />
+              <path d="M48 38 A18 18 0 0 1 14 45" />
+              <path d="M14 45 L14 54 M14 45 L22 48" />
+            </svg>
+            <div class="panel-kicker"><span class="fnum">1</span><span class="ftext">configuration &amp; delivery</span></div>
+            <h3 class="panel-title">GitOps + Kustomize replaced hand-applied manifests</h3>
+            <p class="panel-desc">ArgoCD auto-syncs from Git; Kustomize overlays keep dev/stg/prod thin and consistent instead of forked YAML. EKS runs across 3 AZs with real readiness and liveness probes.</p>
+            <div class="status-bar"><div class="status-before"></div><div class="status-marker"></div><div class="status-after"></div></div>
+            <div class="status-labels"><span>manual manifests</span><span>GitOps synced</span></div>
+            <div class="resolve-tags"><span>CrashLoopBackOff</span><span>ImagePullBackOff</span><span>FailedScheduling</span><span>NodeNotReady</span><span>OOMKilled</span><span>502</span></div>
           </div>
-        </div>
 
+          <!-- PANEL 2 — fix 02 -->
+          <div class="panel" data-idx="2">
+            <div class="panel-watermark">02</div>
+            <svg class="panel-icon" viewBox="0 0 60 60">
+              <circle cx="30" cy="32" r="20" />
+              <path d="M30 32 L30 18" />
+              <path d="M30 32 L40 38" />
+              <path d="M22 6 L30 6" />
+            </svg>
+            <div class="panel-kicker"><span class="fnum">2</span><span class="ftext">cost-aware compute</span></div>
+            <h3 class="panel-title">Lambda scans hourly, partitioned by key</h3>
+            <p class="panel-desc">The function scanned the entire table every run. Repartitioning by key and scanning hourly instead of every 24 hours cut execution time and cost together — and the timeout cascade stopped.</p>
+            <div class="status-bar"><div class="status-before"></div><div class="status-marker"></div><div class="status-after"></div></div>
+            <div class="status-labels"><span>full 24h scan</span><span>hourly, partitioned</span></div>
+            <div class="resolve-tags"><span>Lambda Timeout</span><span>Context Deadline Exceeded</span><span>ThrottlingException</span><span>504</span></div>
+          </div>
+
+          <!-- PANEL 3 — fix 03 -->
+          <div class="panel" data-idx="3">
+            <div class="panel-watermark">03</div>
+            <svg class="panel-icon" viewBox="0 0 60 60">
+              <path d="M16 18 H44 L41 50 H19 Z" />
+              <path d="M12 18 H48" />
+              <path d="M24 18 V12 H36 V18" />
+              <path d="M26 26 V42 M34 26 V42" />
+            </svg>
+            <div class="panel-kicker"><span class="fnum">3</span><span class="ftext">test isolation</span></div>
+            <h3 class="panel-title">Ephemeral pods, wiped after every test run</h3>
+            <p class="panel-desc">Unit tests spin up their own pod and PVC — both destroyed and the storage wiped the moment the suite finishes. Nothing accumulates between runs anymore.</p>
+            <div class="status-bar"><div class="status-before"></div><div class="status-marker"></div><div class="status-after"></div></div>
+            <div class="status-labels"><span>leftover volumes</span><span>destroyed per run</span></div>
+            <div class="resolve-tags"><span>FailedMount</span><span>DiskPressure</span></div>
+          </div>
+
+          <!-- PANEL 4 — fix 04 -->
+          <div class="panel" data-idx="4">
+            <div class="panel-watermark">04</div>
+            <svg class="panel-icon" viewBox="0 0 60 60">
+              <rect x="8" y="10" width="44" height="30" rx="3" />
+              <path d="M14 34 L22 24 L28 30 L38 16 L46 24" />
+              <path d="M22 46 H38 M26 40 V46 M34 40 V46" />
+            </svg>
+            <div class="panel-kicker"><span class="fnum">4</span><span class="ftext">observability</span></div>
+            <h3 class="panel-title">One Grafana stack instead of eleven terminals</h3>
+            <p class="panel-desc">OTEL ships traces and metrics from every service into a Grafana stack deployed once, in a hardened monitoring VM — instead of SSHing into whichever box happens to be on fire.</p>
+            <div class="status-bar"><div class="status-before"></div><div class="status-marker"></div><div class="status-after"></div></div>
+            <div class="status-labels"><span>SSH + grep, per VM</span><span>one dashboard</span></div>
+            <div class="resolve-tags"><span>No Healthy Upstream</span><span>DNS SERVFAIL</span><span>Connection Refused</span><span>Connection Reset</span></div>
+          </div>
+
+          <!-- PANEL 5 — outro -->
+          <div class="panel" data-idx="5">
+            <div class="panel-watermark">05</div>
+            <h2 class="panel-hero-num" id="heroNumEnd">0</h2>
+            <p class="panel-hero-label">alerts remaining, same production traffic</p>
+            <div class="recap-list">
+              <div class="recap-item"><span class="recap-check">✓</span>GitOps + Kustomize — config drift and bad rollouts gone</div>
+              <div class="recap-item"><span class="recap-check">✓</span>Hourly, partitioned Lambda scans — cost and timeouts down together</div>
+              <div class="recap-item"><span class="recap-check">✓</span>Ephemeral test pods — nothing left behind between runs</div>
+              <div class="recap-item"><span class="recap-check">✓</span>Centralized Grafana — one dashboard, not eleven terminals</div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
-      <div class="deck-nav" id="deckNav"></div>
+      <div class="slider-nav" id="sliderNav"></div>
 
-      <div class="hint" id="scrollHint">scroll to step through the fixes</div>
+      <div class="hint" id="scrollHint">scroll to slide through the fixes</div>
     </div>
   </div>
   <!-- ================= /STORY SECTION ================= -->
@@ -287,70 +322,44 @@
 <script>
 (function () {
   var N = 6;
-  var SLOT = 1 / N;
-  var resolvedCounts = [16, 10, 6, 4, 0, 0]; // remaining unresolved once card i becomes active
-
   var wrap = document.getElementById('storyWrap');
-  var cards = Array.prototype.slice.call(document.querySelectorAll('.card'));
-  var alertNumEl = document.getElementById('alertNum');
-  var alertPillEl = document.getElementById('alertPill');
+  var stage = document.querySelector('.slider-stage');
+  var track = document.getElementById('track');
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.panel'));
+  var heroNum = document.getElementById('heroNum');
+  var slideNumEl = document.getElementById('slideNum');
   var hintEl = document.getElementById('scrollHint');
+  var resolvedCounts = [16, 10, 6, 4, 0, 0];
 
-  var deckNav = document.getElementById('deckNav');
-  var dots = [];
-  for (var i = 0; i < N; i++) {
-    (function (i) {
-      var btn = document.createElement('button');
-      btn.className = 'deck-dot';
-      btn.innerHTML = '<span class="bar"></span><span class="num">0' + (i + 1) + '</span>';
-      btn.addEventListener('click', function () {
-        var rect = wrap.getBoundingClientRect();
-        var total = wrap.getBoundingClientRect().height - window.innerHeight;
-        var targetY = window.scrollY + rect.top + (i + 0.5) * SLOT * (wrap.offsetHeight - window.innerHeight);
-        window.scrollTo({ top: targetY, behavior: 'smooth' });
-      });
-      deckNav.appendChild(btn);
-      dots.push(btn);
-    })(i);
-  }
+  var nav = document.getElementById('sliderNav');
+  var dots = panels.map(function (_, i) {
+    var b = document.createElement('button');
+    b.className = 'slider-dot';
+    b.addEventListener('click', function () {
+      var rect = wrap.getBoundingClientRect();
+      var total = wrap.offsetHeight - window.innerHeight;
+      var targetY = window.scrollY + rect.top + (i / (N - 1)) * total;
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
+    });
+    nav.appendChild(b);
+    return b;
+  });
 
-  function lerp(a, b, t) { return a + (b - a) * t; }
   function clamp01(v) { return Math.max(0, Math.min(1, v)); }
 
   function render(t) {
-    var activeIdx = Math.min(N - 1, Math.floor(t / SLOT));
+    var maxTranslate = Math.max(0, track.scrollWidth - stage.clientWidth);
+    track.style.transform = 'translateX(-' + (t * maxTranslate) + 'px)';
 
-    cards.forEach(function (card, i) {
-      var start = i * SLOT, end = (i + 1) * SLOT;
-      var el = card.style;
-      var inView = false;
-
-      if (t < start) {
-        el.transform = 'translateY(70px) scale(0.95)';
-        el.opacity = 0;
-        el.zIndex = i;
-      } else if (t > end) {
-        var pastAmt = clamp01((t - end) / (SLOT * 0.8));
-        el.transform = 'translateY(' + (-24 - pastAmt * 20) + 'px) scale(' + (0.97 - pastAmt * 0.05) + ')';
-        el.opacity = Math.max(0, 0.9 - pastAmt * 1.1);
-        el.zIndex = i;
-      } else {
-        var local = (t - start) / SLOT;
-        var slideIn = clamp01(local / 0.22);
-        var slideOut = clamp01((local - 0.82) / 0.18);
-        el.transform = 'translateY(' + (lerp(70, 0, slideIn) - slideOut * 26) + 'px) scale(' + (lerp(0.95, 1, slideIn) - slideOut * 0.03) + ')';
-        el.opacity = lerp(0, 1, slideIn) * (1 - slideOut * 0.15);
-        el.zIndex = 10 + i;
-        inView = true;
-      }
-      card.classList.toggle('in-view', inView);
+    var activeIdx = Math.round(t * (N - 1));
+    panels.forEach(function (p, i) {
+      p.classList.toggle('active', i === activeIdx);
+      p.classList.toggle('visited', i <= activeIdx);
     });
-
     dots.forEach(function (d, i) { d.classList.toggle('active', i === activeIdx); });
 
-    var remaining = resolvedCounts[activeIdx];
-    alertNumEl.textContent = remaining;
-    alertPillEl.classList.toggle('resolved', remaining === 0);
+    slideNumEl.textContent = String(activeIdx + 1).padStart(2, '0');
+    heroNum.textContent = resolvedCounts[activeIdx];
 
     hintEl.style.opacity = t < 0.015 ? '0.8' : '0';
   }
