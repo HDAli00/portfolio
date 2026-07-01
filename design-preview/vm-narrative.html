@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Narrative section preview — chaos to clarity</title>
+<title>Narrative section preview — 3am to resolved</title>
 <style>
   :root {
     --ink: #111111;
@@ -19,225 +19,229 @@
     font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
+  .mono { font-family: 'SFMono-Regular', Menlo, Consolas, monospace; }
 
-  /* ---- filler sections just to give scroll context, matching site rhythm ---- */
-  .filler {
-    max-width: 850px;
-    margin: 0 auto;
-    padding: 64px 48px;
-  }
+  /* ---- filler sections, matching site rhythm ---- */
+  .filler { max-width: 850px; margin: 0 auto; padding: 64px 48px; }
   .filler h1 {
     font-size: clamp(36px, 5vw, 52px);
-    font-weight: 600;
-    line-height: 1.18;
-    letter-spacing: -0.025em;
-    max-width: 680px;
-    margin: 0 0 24px;
+    font-weight: 600; line-height: 1.18; letter-spacing: -0.025em;
+    max-width: 680px; margin: 0 0 24px;
   }
-  .filler p {
-    font-size: 17px;
-    line-height: 1.75;
-    color: var(--sub);
-    max-width: 540px;
-    margin: 0;
-  }
-  hr.divider {
-    max-width: 850px;
-    margin: 0 auto;
-    border: none;
-    border-top: 1px solid var(--line);
-  }
-  .section-label {
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    margin: 0 0 8px;
-  }
+  .filler p { font-size: 17px; line-height: 1.75; color: var(--sub); max-width: 540px; margin: 0; }
+  hr.divider { max-width: 850px; margin: 0 auto; border: none; border-top: 1px solid var(--line); }
+  .section-label { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; margin: 0 0 8px; }
   .fake-row {
-    max-width: 850px;
-    margin: 0 auto;
-    padding: 24px 48px;
-    display: flex;
-    justify-content: space-between;
-    border-top: 1px solid var(--line);
-    font-size: 15px;
-    color: var(--sub);
+    max-width: 850px; margin: 0 auto; padding: 24px 48px;
+    display: flex; justify-content: space-between; border-top: 1px solid var(--line);
+    font-size: 15px; color: var(--sub);
   }
 
   /* =========================================================
-     THE NARRATIVE SECTION
+     THE NARRATIVE SECTION — full-bleed, breaks out of max-width
      ========================================================= */
   .story-wrap {
     position: relative;
-    height: 320vh; /* scroll distance the story plays out over */
+    height: 460vh;
   }
   .story-pin {
     position: sticky;
     top: 0;
     height: 100vh;
+    overflow: hidden;
+    background: #0a0a0d;
+    transition: background-color 0.1s linear;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
-    overflow: hidden;
-    background: #fff;
-  }
-
-  .story-head {
-    max-width: 850px;
-    margin: 0 auto;
-    padding: 0 48px;
-    width: 100%;
-    text-align: left;
-  }
-  .story-kicker {
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    color: var(--faint);
-    text-transform: uppercase;
-    margin: 0 0 10px;
-    font-family: 'SFMono-Regular', Menlo, monospace;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-  }
-  .story-title {
-    font-size: clamp(26px, 3.4vw, 38px);
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    line-height: 1.25;
-    margin: 0 0 12px;
-    max-width: 620px;
-    min-height: 1.3em;
-  }
-  .story-sub {
-    font-size: 16px;
-    color: var(--sub);
-    line-height: 1.6;
-    max-width: 520px;
-    margin: 0;
-  }
-
-  .stage {
-    position: relative;
-    max-width: 850px;
-    margin: 32px auto 0;
-    padding: 0 48px;
-    width: 100%;
-    height: 46vh;
-    min-height: 320px;
-  }
-  .stage svg { width: 100%; height: 100%; overflow: visible; }
-
-  .wire {
-    fill: none;
-    stroke: #cfcfcf;
-    stroke-width: 1.4;
-    stroke-linecap: round;
-  }
-  .wire.hot { stroke: #b8b8b8; }
-
-  .node {
-    fill: #fff;
-    stroke: var(--ink);
-    stroke-width: 1.3;
-  }
-  .node-dot {
-    fill: var(--ink);
-  }
-  .node-label {
-    font-size: 11px;
-    font-family: 'SFMono-Regular', Menlo, monospace;
-    fill: var(--sub);
-  }
-  .node-group {
-    cursor: pointer;
-  }
-  .node-group circle.node {
-    transition: stroke 0.15s ease;
-  }
-  .node-group:hover circle.node {
-    stroke: var(--ink);
-    stroke-width: 2;
-  }
-  .node-group:hover .node-label {
-    fill: var(--ink);
-  }
-
-  .messy-label {
-    font-size: 10.5px;
-    font-family: 'SFMono-Regular', Menlo, monospace;
-    fill: var(--faint);
-  }
-
-  /* annotation tooltip */
-  .annotation {
-    position: absolute;
-    max-width: 220px;
-    background: #fff;
-    border: 1px solid var(--line);
-    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-    padding: 12px 14px;
-    font-size: 12.5px;
-    line-height: 1.5;
-    color: var(--sub);
+    padding: 0 5vw;
     pointer-events: none;
-    opacity: 0;
-    transform: translateY(4px);
-    transition: opacity 0.15s ease, transform 0.15s ease;
-    z-index: 5;
+    will-change: transform, opacity, filter;
   }
-  .annotation strong {
-    display: block;
-    color: var(--ink);
-    font-size: 12.5px;
-    font-weight: 600;
-    margin-bottom: 3px;
-  }
-  .annotation.show {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .slide.interactive { pointer-events: auto; }
+  .slide-inner { width: 100%; max-width: 980px; }
 
-  .progress-rail {
-    max-width: 850px;
-    margin: 28px auto 0;
-    padding: 0 48px;
-    width: 100%;
+  .kicker {
+    font-size: 12px; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; margin: 0 0 12px; opacity: 0.6;
   }
-  .progress-track {
-    height: 2px;
-    background: var(--line);
-    position: relative;
+  .headline {
+    font-size: clamp(26px, 3.6vw, 42px); font-weight: 600;
+    letter-spacing: -0.02em; line-height: 1.2; margin: 0 0 10px; max-width: 640px;
   }
-  .progress-fill {
+  .sub { font-size: 15px; line-height: 1.6; max-width: 480px; margin: 0; }
+
+  /* ---------- SLIDE 1: dark server room, shaking VMs ---------- */
+  .slide1 .kicker { color: #d8d8dc; }
+  .slide1 .headline { color: #f4f4f5; }
+  .slide1 .sub { color: #9a9aa2; }
+
+  .rack-stage { position: relative; width: 100%; height: 46vh; min-height: 300px; margin-top: 26px; }
+  .rack-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .wire { fill: none; stroke: rgba(255,255,255,0.09); stroke-width: 1.2; }
+  .wire.hot { stroke: rgba(255,70,70,0.4); stroke-width: 1.3; }
+
+  .vm {
     position: absolute;
-    top: 0; left: 0;
-    height: 100%;
-    background: var(--ink);
-    width: 0%;
+    width: 108px; height: 60px;
+    background: linear-gradient(180deg, #17171b, #101013);
+    border: 1px solid #2a2a30;
+    border-radius: 5px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+    padding: 7px 9px;
   }
-  .progress-caption {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: var(--faint);
-    margin-top: 8px;
-    font-family: 'SFMono-Regular', Menlo, monospace;
-    letter-spacing: 0.02em;
+  .vm .led-row { display: flex; gap: 4px; margin-bottom: 6px; }
+  .vm .led { width: 5px; height: 5px; border-radius: 50%; background: #3a3a42; }
+  .vm.ok .led:first-child { background: #3ecf6a; box-shadow: 0 0 4px #3ecf6a; }
+  .vm .label { font-size: 10px; color: #8b8b93; letter-spacing: 0.01em; }
+  .vm.ok { animation: jitter-soft 3.6s ease-in-out infinite; }
+  .vm.err {
+    animation: jitter-hard 0.55s ease-in-out infinite;
+    border-color: #ff3b3b;
+    background: linear-gradient(180deg, #24100f, #150a0a);
+    box-shadow: 0 0 0 1px rgba(255,59,59,0.25), 0 0 22px rgba(255,59,59,0.28), 0 6px 16px rgba(0,0,0,0.5);
   }
+  .vm.err .led:first-child { background: #ff3b3b; box-shadow: 0 0 6px #ff3b3b; animation: blink 0.9s steps(1) infinite; }
+  .vm.err .label { color: #ff9a9a; }
+
+  @keyframes jitter-soft {
+    0%,100% { transform: translate(0,0) rotate(0deg); }
+    25% { transform: translate(-0.6px,0.6px) rotate(-0.15deg); }
+    50% { transform: translate(0.5px,-0.5px) rotate(0.1deg); }
+    75% { transform: translate(-0.4px,-0.4px) rotate(-0.1deg); }
+  }
+  @keyframes jitter-hard {
+    0%,100% { transform: translate(0,0) rotate(0deg); }
+    20% { transform: translate(-2.4px,1.6px) rotate(-0.9deg); }
+    40% { transform: translate(2px,-1.8px) rotate(0.8deg); }
+    60% { transform: translate(-1.6px,-1.4px) rotate(-0.6deg); }
+    80% { transform: translate(2.2px,1.4px) rotate(0.7deg); }
+  }
+  @keyframes blink { 50% { opacity: 0.25; } }
+
+  .badge {
+    position: absolute;
+    background: #1a0b0b;
+    border: 1px solid rgba(255,59,59,0.5);
+    color: #ff8f8f;
+    font-size: 10px;
+    padding: 3px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+    box-shadow: 0 0 10px rgba(255,59,59,0.15);
+    animation: badge-pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes badge-pulse { 0%,100% { opacity: 0.85; } 50% { opacity: 1; } }
+
+  .logpanel {
+    position: absolute;
+    right: 0; bottom: -4px;
+    width: 300px; height: 108px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid #232328;
+    border-radius: 4px;
+    overflow: hidden;
+    padding: 8px 10px;
+  }
+  .logpanel::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10,10,13,0.9), transparent 18%, transparent 82%, rgba(10,10,13,0.9));
+    pointer-events: none;
+  }
+  .log-track { animation: log-scroll 14s linear infinite; }
+  @keyframes log-scroll { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+  .log-line { font-size: 10.5px; line-height: 1.9; color: #6c6c74; white-space: nowrap; }
+  .log-line.err { color: #ff8f8f; }
+
+  /* ---------- SLIDE 2: zoomed diagnosis ---------- */
+  .slide2 .kicker { color: #cfd8ff; }
+  .slide2 .headline { color: #f4f4f5; }
+  .slide2 .sub { color: #a3a8bd; }
+
+  .diag-stage {
+    display: flex; align-items: center; justify-content: center; gap: 64px;
+    margin-top: 34px; flex-wrap: wrap;
+  }
+  .diag-vms { display: flex; gap: 22px; }
+  .diag-vm {
+    width: 128px; height: 78px;
+    background: linear-gradient(180deg, #24100f, #150a0a);
+    border: 1px solid #ff3b3b;
+    border-radius: 6px;
+    box-shadow: 0 0 0 1px rgba(255,59,59,0.25), 0 0 26px rgba(255,59,59,0.25);
+    padding: 10px 12px;
+    animation: jitter-hard 0.6s ease-in-out infinite;
+  }
+  .diag-vm .led-row { display: flex; gap: 5px; margin-bottom: 8px; }
+  .diag-vm .led { width: 6px; height: 6px; border-radius: 50%; background: #ff3b3b; box-shadow: 0 0 6px #ff3b3b; animation: blink 0.9s steps(1) infinite; }
+  .diag-vm .label { font-size: 11px; color: #ff9a9a; }
+
+  .diag-cards { display: flex; flex-direction: column; gap: 12px; max-width: 380px; }
+  .diag-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #26262d;
+    border-radius: 6px;
+    padding: 12px 14px;
+    opacity: 0;
+    transform: translateX(14px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+  }
+  .diag-card.show { opacity: 1; transform: translateX(0); }
+  .diag-card strong { display: block; color: #f0f0f2; font-size: 13px; margin-bottom: 3px; }
+  .diag-card span { color: #9a9aa4; font-size: 12.5px; line-height: 1.55; }
+
+  /* ---------- SLIDE 3: light, resolved architecture ---------- */
+  .slide3 .kicker { color: var(--faint); }
+  .slide3 .headline { color: var(--ink); }
+  .slide3 .sub { color: var(--sub); }
+
+  .graph-stage { position: relative; width: 100%; height: 34vh; min-height: 240px; margin-top: 26px; }
+  .graph-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .edge { fill: none; stroke: #d8d8d8; stroke-width: 1.3; }
+  .gnode { fill: #fff; stroke: var(--ink); stroke-width: 1.3; transition: stroke-width 0.15s ease; }
+  .gnode-label { font-size: 11px; font-family: 'SFMono-Regular', Menlo, monospace; fill: var(--sub); }
+  .gnode-group { cursor: pointer; }
+  .gnode-group:hover .gnode { stroke-width: 2.1; }
+  .gnode-group:hover .gnode-label { fill: var(--ink); }
+
+  .annotation {
+    position: absolute; max-width: 220px; background: #fff;
+    border: 1px solid var(--line); box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    padding: 12px 14px; font-size: 12.5px; line-height: 1.5; color: var(--sub);
+    pointer-events: none; opacity: 0; transform: translateY(4px);
+    transition: opacity 0.15s ease, transform 0.15s ease; z-index: 5;
+  }
+  .annotation strong { display: block; color: var(--ink); font-size: 12.5px; font-weight: 600; margin-bottom: 3px; }
+  .annotation.show { opacity: 1; transform: translateY(0); }
+
+  .stat-strip { display: flex; gap: 36px; margin-top: 30px; opacity: 0; transform: translateY(10px); transition: opacity 0.5s ease, transform 0.5s ease; }
+  .stat-strip.show { opacity: 1; transform: translateY(0); }
+  .stat { }
+  .stat .num { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
+  .stat .lbl { font-size: 11.5px; color: var(--faint); margin-top: 2px; }
+
+  /* ---------- shared progress rail ---------- */
+  .rail {
+    position: absolute; left: 0; right: 0; bottom: 26px;
+    padding: 0 5vw; z-index: 20; pointer-events: none;
+  }
+  .rail-track { max-width: 980px; margin: 0 auto; height: 2px; background: rgba(255,255,255,0.14); position: relative; transition: background-color 0.2s ease; }
+  .rail-fill { position: absolute; top: 0; left: 0; height: 100%; background: #fff; width: 0%; transition: background-color 0.2s ease; }
+  .rail-caption { max-width: 980px; margin: 8px auto 0; display: flex; justify-content: space-between; font-size: 10.5px; letter-spacing: 0.03em; text-transform: uppercase; color: rgba(255,255,255,0.4); transition: color 0.2s ease; }
+  .story-pin.light .rail-track { background: #ececec; }
+  .story-pin.light .rail-fill { background: #111; }
+  .story-pin.light .rail-caption { color: #999; }
 
   .hint {
-    position: absolute;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 11px;
-    color: var(--faint);
-    font-family: 'SFMono-Regular', Menlo, monospace;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
+    position: absolute; top: 22px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.03em; text-transform: uppercase;
+    transition: opacity 0.3s ease; z-index: 20;
   }
 </style>
 </head>
@@ -250,56 +254,92 @@
 
   <hr class="divider" />
 
-  <!-- ================= STORY SECTION (this is the new piece, sits before Articles) ================= -->
+  <!-- ================= STORY SECTION ================= -->
   <div class="story-wrap" id="storyWrap">
-    <div class="story-pin">
-      <div class="story-head">
-        <p class="story-kicker" id="kicker">01 — the starting point</p>
-        <h2 class="story-title" id="storyTitle">A cluster held together by SSH and hope.</h2>
-        <p class="story-sub" id="storySub">Manually provisioned EC2, drifted staging vs. prod, and configuration nobody could reproduce twice.</p>
-      </div>
+    <div class="story-pin" id="storyPin">
 
-      <div class="stage">
-        <svg viewBox="0 0 750 320" preserveAspectRatio="xMidYMid meet">
-          <g id="wires"></g>
-          <g id="messyLabels"></g>
-          <g id="nodes" style="opacity:0"></g>
-        </svg>
+      <div class="hint" id="scrollHint">scroll to go deeper</div>
 
-        <div class="annotation" id="ann-git">
-          <strong>Git as source of truth</strong>
-          Every manifest lives in the repo. No cluster state exists that isn't already committed.
-        </div>
-        <div class="annotation" id="ann-argo">
-          <strong>GitOps auto-sync</strong>
-          ArgoCD reconciles continuously and flags drift instead of letting it silently accumulate.
-        </div>
-        <div class="annotation" id="ann-kustomize">
-          <strong>Kustomize overlays</strong>
-          One base manifest, thin per-env overlays (dev/stg/prod) — no copy-pasted YAML forks to keep in sync.
-        </div>
-        <div class="annotation" id="ann-eks">
-          <strong>EKS + Karpenter</strong>
-          Spot-first autoscaling replaced fixed ASGs — right-sized nodes, provisioned in seconds.
-        </div>
-        <div class="annotation" id="ann-cost">
-          <strong>Cost, made visible</strong>
-          Consolidated six overlapping services into two. Usage-based dashboards replace end-of-month surprises.
+      <!-- SLIDE 1 -->
+      <div class="slide slide1 interactive" id="slide1">
+        <div class="slide-inner">
+          <p class="kicker">01 — 3am, production</p>
+          <h2 class="headline">Eight VMs. Three on fire. Nobody knows which.</h2>
+          <p class="sub">Wired together by hand, scaled by hand, and paged on by hand.</p>
+
+          <div class="rack-stage" id="rackStage">
+            <svg viewBox="0 0 900 460" preserveAspectRatio="xMidYMid meet"><g id="wires"></g></svg>
+            <div id="vms"></div>
+            <div class="logpanel">
+              <div class="log-track" id="logTrack"></div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="progress-rail">
-        <div class="progress-track">
-          <div class="progress-fill" id="progressFill"></div>
-        </div>
-        <div class="progress-caption">
-          <span>chaos</span>
-          <span id="progressPct">0%</span>
-          <span>clarity</span>
+      <!-- SLIDE 2 -->
+      <div class="slide slide2" id="slide2">
+        <div class="slide-inner">
+          <p class="kicker">02 — One level deeper</p>
+          <h2 class="headline">Two pods, no health checks, one bad night.</h2>
+          <p class="sub">Zoom into what actually failed — and why nobody caught it sooner.</p>
+
+          <div class="diag-stage">
+            <div class="diag-vms">
+              <div class="diag-vm">
+                <div class="led-row"><div class="led"></div></div>
+                <div class="label mono">vm-web-02</div>
+              </div>
+              <div class="diag-vm">
+                <div class="led-row"><div class="led"></div></div>
+                <div class="label mono">vm-worker-01</div>
+              </div>
+            </div>
+            <div class="diag-cards" id="diagCards">
+              <div class="diag-card" data-idx="0"><strong>No readiness probe</strong><span>Traffic kept routing to a pod that couldn't serve requests — 502s for 6 minutes before anyone paged.</span></div>
+              <div class="diag-card" data-idx="1"><strong>No liveness probe</strong><span>CrashLoopBackOff sat unnoticed. Kubernetes had no signal to restart it sooner.</span></div>
+              <div class="diag-card" data-idx="2"><strong>Single AZ</strong><span>Every one of these ran in the same zone. One hiccup, one outage.</span></div>
+              <div class="diag-card" data-idx="3"><strong>Fixed-size ASG</strong><span>No headroom for the spike. Requests queued until they timed out.</span></div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="hint" id="scrollHint">scroll to untangle it</div>
+      <!-- SLIDE 3 -->
+      <div class="slide slide3 interactive" id="slide3">
+        <div class="slide-inner">
+          <p class="kicker">03 — What replaced it</p>
+          <h2 class="headline">Same workloads. A system that heals itself.</h2>
+          <p class="sub">GitOps-managed, probed, spread across zones, and small enough to actually reason about.</p>
+
+          <div class="graph-stage">
+            <svg viewBox="0 0 780 220" preserveAspectRatio="xMidYMid meet">
+              <g id="edges"></g>
+              <g id="gnodes"></g>
+            </svg>
+
+            <div class="annotation" id="ann-git"><strong>Git as source of truth</strong>Every manifest reviewable. Nothing touches the cluster that isn't committed.</div>
+            <div class="annotation" id="ann-argo"><strong>GitOps auto-sync</strong>Continuous reconciliation — drift gets flagged, not discovered mid-incident.</div>
+            <div class="annotation" id="ann-kustomize"><strong>Kustomize overlays</strong>One base, thin per-env overlays. No forked YAML across dev/stg/prod.</div>
+            <div class="annotation" id="ann-eks"><strong>EKS, probed, multi-AZ</strong>Readiness + liveness probes on every deployment, spread across 3 zones.</div>
+            <div class="annotation" id="ann-karpenter"><strong>Karpenter</strong>Spot-first autoscaling — headroom appears in seconds, not a ticket.</div>
+            <div class="annotation" id="ann-cost"><strong>Cost, made visible</strong>Six overlapping services collapsed into two. Usage-based dashboards, no surprises.</div>
+          </div>
+
+          <div class="stat-strip" id="statStrip">
+            <div class="stat"><div class="num">3 AZs</div><div class="lbl">was 1</div></div>
+            <div class="stat"><div class="num">&lt;30s</div><div class="lbl">auto-heal</div></div>
+            <div class="stat"><div class="num">0</div><div class="lbl">blind restarts</div></div>
+            <div class="stat"><div class="num">-40%</div><div class="lbl">monthly cost</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rail">
+        <div class="rail-track"><div class="rail-fill" id="railFill"></div></div>
+        <div class="rail-caption"><span>3am</span><span id="railPct">0%</span><span>resolved</span></div>
+      </div>
+
     </div>
   </div>
   <!-- ================= /STORY SECTION ================= -->
@@ -310,96 +350,138 @@
     <p class="section-label">Latest Articles</p>
   </div>
   <div class="fake-row"><span>On-call, without the pager anxiety</span><span>Jun 12, 2026</span></div>
-  <div class="fake-row"><span>Kustomize overlays vs. Helm values: a real comparison</span><span>May 28, 2026</span></div>
+  <div class="fake-row"><span>Readiness vs. liveness probes: what actually pages you</span><span>May 28, 2026</span></div>
   <div class="fake-row"><span>What actually breaks when EKS nodes churn</span><span>May 3, 2026</span></div>
 
 <script>
 (function () {
-  // ---- messy wire control points (tangled) ----
-  var messy = [
-    [[40,60],[160,180],[90,250],[260,140],[380,70]],
-    [[60,220],[190,90],[300,250],[420,120],[520,200]],
-    [[100,30],[220,260],[340,60],[460,230],[600,90]],
-    [[30,160],[150,40],[260,220],[400,60],[540,180]],
-    [[120,290],[240,120],[360,270],[500,80],[640,220]],
-    [[200,20],[320,200],[440,40],[560,240],[690,110]]
+  /* ---------------- Slide 1: rack of VMs ---------------- */
+  var vmDefs = [
+    { x: 30,  y: 40,  label: 'vm-web-01',    status: 'ok'  },
+    { x: 200, y: 130, label: 'vm-web-02',    status: 'err', badge: '502 Bad Gateway' },
+    { x: 400, y: 20,  label: 'vm-api-01',    status: 'ok'  },
+    { x: 560, y: 150, label: 'vm-api-02',    status: 'err', badge: 'ETIMEDOUT' },
+    { x: 720, y: 60,  label: 'vm-cache-01',  status: 'ok'  },
+    { x: 100, y: 280, label: 'vm-db-01',     status: 'ok'  },
+    { x: 330, y: 320, label: 'vm-worker-01', status: 'err', badge: 'CrashLoopBackOff' },
+    { x: 560, y: 300, label: 'vm-worker-02', status: 'ok'  }
   ];
+  var wirePairs = [[0,2],[2,4],[0,5],[5,6],[6,3],[3,7],[1,2],[1,5],[4,7],[2,6],[1,6],[3,0]];
+  var VMW = 108, VMH = 60;
 
-  // ---- clean node graph target positions (final layout) ----
-  var nodes = [
-    { id:'git',       x:60,  y:160, label:'Git' , ann:'ann-git' },
-    { id:'argo',      x:220, y:80,  label:'ArgoCD', ann:'ann-argo' },
-    { id:'kustomize', x:220, y:240, label:'Kustomize', ann:'ann-kustomize' },
-    { id:'eks',       x:420, y:160, label:'EKS', ann:'ann-eks' },
-    { id:'cost',      x:620, y:160, label:'Cost', ann:'ann-cost' }
-  ];
+  var vmsContainer = document.getElementById('vms');
+  vmDefs.forEach(function (v, i) {
+    var el = document.createElement('div');
+    el.className = 'vm ' + v.status;
+    el.style.left = v.x + 'px';
+    el.style.top = v.y + 'px';
+    el.style.animationDelay = (-(i * 0.37)).toFixed(2) + 's';
+    el.innerHTML =
+      '<div class="led-row"><div class="led"></div><div class="led"></div><div class="led"></div></div>' +
+      '<div class="label mono">' + v.label + '</div>';
+    vmsContainer.appendChild(el);
 
-  // clean layout expressed as the SAME 6 wires, straightened into edges between the nodes above
-  var clean = [
-    [[60,160],[110,140],[160,110],[190,90],[220,80]],   // git -> argo
-    [[60,160],[110,180],[160,210],[190,230],[220,240]], // git -> kustomize
-    [[220,80],[280,100],[340,130],[380,150],[420,160]], // argo -> eks
-    [[220,240],[280,220],[340,190],[380,170],[420,160]],// kustomize -> eks
-    [[420,160],[480,160],[540,160],[580,160],[620,160]],// eks -> cost
-    [[220,80],[300,60],[380,60],[500,90],[620,160]]     // argo -> cost (oversight line)
-  ];
+    if (v.badge) {
+      var b = document.createElement('div');
+      b.className = 'badge mono';
+      b.textContent = v.badge;
+      b.style.left = (v.x + VMW - 6) + 'px';
+      b.style.top = (v.y - 16) + 'px';
+      b.style.animationDelay = (-(i * 0.6)).toFixed(2) + 's';
+      vmsContainer.appendChild(b);
+    }
+  });
+  vmsContainer.style.position = 'absolute';
+  vmsContainer.style.inset = '0';
 
   var wiresGroup = document.getElementById('wires');
-  var messyLabelsGroup = document.getElementById('messyLabels');
-  var nodesGroup = document.getElementById('nodes');
-  var paths = [];
-
-  messy.forEach(function (pts, i) {
+  wirePairs.forEach(function (pair, i) {
+    var a = vmDefs[pair[0]], b = vmDefs[pair[1]];
+    var ax = a.x + VMW / 2, ay = a.y + VMH / 2;
+    var bx = b.x + VMW / 2, by = b.y + VMH / 2;
+    var mx = (ax + bx) / 2, my = (ay + by) / 2;
+    var dx = bx - ax, dy = by - ay;
+    var len = Math.sqrt(dx * dx + dy * dy) || 1;
+    var nx = -dy / len, ny = dx / len;
+    var bend = ((i % 5) - 2) * 26;
+    var c1x = mx + nx * bend - dx * 0.12, c1y = my + ny * bend - dy * 0.12;
+    var c2x = mx + nx * bend + dx * 0.12, c2y = my + ny * bend + dy * 0.12;
+    var hot = a.status === 'err' || b.status === 'err';
     var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    p.setAttribute('class', 'wire' + (i % 2 === 0 ? ' hot' : ''));
+    p.setAttribute('class', 'wire' + (hot ? ' hot' : ''));
+    p.setAttribute('d', 'M ' + ax + ' ' + ay + ' C ' + c1x + ' ' + c1y + ', ' + c2x + ' ' + c2y + ', ' + bx + ' ' + by);
     wiresGroup.appendChild(p);
-    paths.push(p);
   });
 
-  var messyTags = ['EC2 (manual)', 'SSH keys', 'drifted staging', 'no rollback', 'snowflake config', '3am pages'];
-  messyTags.forEach(function (t, i) {
-    var pt = messy[i][2];
-    var txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    txt.setAttribute('class', 'messy-label');
-    txt.setAttribute('x', pt[0] + 6);
-    txt.setAttribute('y', pt[1] - 6);
-    txt.textContent = t;
-    messyLabelsGroup.appendChild(txt);
+  var logLines = [
+    { t: 'GET /checkout -&gt; 502 Bad Gateway', err: true },
+    { t: 'readiness probe failed: HTTP 503', err: true },
+    { t: 'dial tcp 10.0.4.12:8080: connection refused', err: true },
+    { t: 'Back-off restarting failed container', err: true },
+    { t: 'context deadline exceeded (30000ms)', err: true },
+    { t: 'pod/vm-worker-01 0/1 CrashLoopBackOff, 14 restarts', err: true },
+    { t: 'kubectl logs vm-worker-01: no logs found (restarting)', err: false },
+    { t: 'upstream connect error before headers received', err: true },
+    { t: 'vm-db-01: connection pool exhausted (100/100)', err: false },
+    { t: 'health check vm-web-02: unhealthy x6', err: true }
+  ];
+  var logTrack = document.getElementById('logTrack');
+  function renderLogs() {
+    var html = '';
+    logLines.concat(logLines).forEach(function (l) {
+      html += '<div class="log-line mono' + (l.err ? ' err' : '') + '">' + l.t + '</div>';
+    });
+    logTrack.innerHTML = html;
+  }
+  renderLogs();
+
+  /* ---------------- Slide 3: resolved architecture graph ---------------- */
+  var gnodes = [
+    { id: 'git',       x: 40,  y: 110, label: 'Git',       ann: 'ann-git' },
+    { id: 'argo',       x: 210, y: 50,  label: 'ArgoCD',    ann: 'ann-argo' },
+    { id: 'kustomize', x: 210, y: 170, label: 'Kustomize', ann: 'ann-kustomize' },
+    { id: 'eks',       x: 400, y: 110, label: 'EKS',       ann: 'ann-eks' },
+    { id: 'karpenter', x: 580, y: 50,  label: 'Karpenter', ann: 'ann-karpenter' },
+    { id: 'cost',       x: 720, y: 110, label: 'Cost',       ann: 'ann-cost' }
+  ];
+  var gedges = [[0,1],[0,2],[1,3],[2,3],[3,4],[4,5],[3,5]];
+
+  var edgesGroup = document.getElementById('edges');
+  gedges.forEach(function (pair) {
+    var a = gnodes[pair[0]], b = gnodes[pair[1]];
+    var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('class', 'edge');
+    var mx = (a.x + b.x) / 2;
+    p.setAttribute('d', 'M ' + a.x + ' ' + a.y + ' C ' + mx + ' ' + a.y + ', ' + mx + ' ' + b.y + ', ' + b.x + ' ' + b.y);
+    edgesGroup.appendChild(p);
   });
 
-  nodes.forEach(function (n) {
+  var gnodesGroup = document.getElementById('gnodes');
+  var graphStage = document.querySelector('.graph-stage');
+  gnodes.forEach(function (n) {
     var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    g.setAttribute('class', 'node-group');
-    g.setAttribute('data-ann', n.ann);
-
+    g.setAttribute('class', 'gnode-group');
     var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-    c.setAttribute('class', 'node');
-    c.setAttribute('cx', n.x);
-    c.setAttribute('cy', n.y);
-    c.setAttribute('r', 20);
+    c.setAttribute('class', 'gnode');
+    c.setAttribute('cx', n.x); c.setAttribute('cy', n.y); c.setAttribute('r', 18);
     g.appendChild(c);
-
     var label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    label.setAttribute('class', 'node-label');
-    label.setAttribute('x', n.x);
-    label.setAttribute('y', n.y + 36);
+    label.setAttribute('class', 'gnode-label');
+    label.setAttribute('x', n.x); label.setAttribute('y', n.y + 32);
     label.setAttribute('text-anchor', 'middle');
     label.textContent = n.label;
     g.appendChild(label);
-
-    nodesGroup.appendChild(g);
+    gnodesGroup.appendChild(g);
 
     g.addEventListener('mouseenter', function () {
       var ann = document.getElementById(n.ann);
       if (!ann) return;
-      var stage = document.querySelector('.stage');
-      var stageRect = stage.getBoundingClientRect();
-      var svg = stage.querySelector('svg');
+      var stageRect = graphStage.getBoundingClientRect();
+      var svg = graphStage.querySelector('svg');
       var svgRect = svg.getBoundingClientRect();
-      var scaleX = svgRect.width / 750;
-      var scaleY = svgRect.height / 320;
-      var left = (n.x * scaleX) + (svgRect.left - stageRect.left) + 26;
-      var top = (n.y * scaleY) + (svgRect.top - stageRect.top) - 20;
+      var scaleX = svgRect.width / 780, scaleY = svgRect.height / 220;
+      var left = (n.x * scaleX) + (svgRect.left - stageRect.left) + 24;
+      var top = (n.y * scaleY) + (svgRect.top - stageRect.top) - 18;
       ann.style.left = Math.min(left, stageRect.width - 232) + 'px';
       ann.style.top = Math.max(top, 0) + 'px';
       ann.classList.add('show');
@@ -410,61 +492,83 @@
     });
   });
 
-  function lerp(a, b, t) { return a + (b - a) * t; }
+  /* ---------------- scroll-driven director ---------------- */
+  var wrap = document.getElementById('storyWrap');
+  var pin = document.getElementById('storyPin');
+  var hintEl = document.getElementById('scrollHint');
+  var railFill = document.getElementById('railFill');
+  var railPct = document.getElementById('railPct');
+  var diagCards = document.querySelectorAll('.diag-card');
+  var statStrip = document.getElementById('statStrip');
 
-  function pathD(a, b, t) {
-    var pts = a.map(function (p, i) {
-      return [lerp(p[0], b[i][0], t), lerp(p[1], b[i][1], t)];
-    });
-    return 'M ' + pts[0][0] + ' ' + pts[0][1] +
-      ' C ' + pts[1][0] + ' ' + pts[1][1] + ', ' + pts[2][0] + ' ' + pts[2][1] + ', ' + pts[3][0] + ' ' + pts[3][1] +
-      ' S ' + pts[4][0] + ' ' + pts[4][1] + ', ' + pts[4][0] + ' ' + pts[4][1];
-  }
-
-  var stages = [
-    { at: 0.0,  kicker: '01 — the starting point', title: 'A cluster held together by SSH and hope.', sub: 'Manually provisioned EC2, drifted staging vs. prod, and configuration nobody could reproduce twice.' },
-    { at: 0.35, kicker: '02 — pulling the thread', title: 'Every change starts moving through one path.', sub: 'Config gets collapsed into Git. Nothing touches the cluster that isn’t already reviewable.' },
-    { at: 0.65, kicker: '03 — the shape settles', title: 'GitOps, Kustomize overlays, and autoscaling that fits.', sub: 'ArgoCD reconciles state continuously. Kustomize keeps environments thin and consistent. Karpenter right-sizes nodes.' },
-    { at: 0.9,  kicker: '04 — what it costs now', title: 'Fewer moving parts. A bill you can explain.', sub: 'Six overlapping services became two. The architecture is small enough to hold in your head.' }
+  var slides = [
+    { el: document.getElementById('slide1'), inStart: 0.00, inEnd: 0.08, outStart: 0.26, outEnd: 0.35 },
+    { el: document.getElementById('slide2'), inStart: 0.30, inEnd: 0.38, outStart: 0.58, outEnd: 0.66 },
+    { el: document.getElementById('slide3'), inStart: 0.62, inEnd: 0.72, outStart: 1.00, outEnd: 1.00 }
   ];
 
-  var kickerEl = document.getElementById('kicker');
-  var titleEl = document.getElementById('storyTitle');
-  var subEl = document.getElementById('storySub');
-  var fillEl = document.getElementById('progressFill');
-  var pctEl = document.getElementById('progressPct');
-  var hintEl = document.getElementById('scrollHint');
-  var wrap = document.getElementById('storyWrap');
+  function envelope(p, s) {
+    if (p <= s.inStart) return 0;
+    if (p < s.inEnd) return (p - s.inStart) / (s.inEnd - s.inStart);
+    if (p <= s.outStart) return 1;
+    if (s.outStart >= s.outEnd) return 1;
+    if (p < s.outEnd) return 1 - (p - s.outStart) / (s.outEnd - s.outStart);
+    return 0;
+  }
 
-  var lastStageIdx = -1;
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  var bgStops = [
+    { p: 0.00, c: [10, 10, 13] },
+    { p: 0.60, c: [10, 10, 13] },
+    { p: 0.78, c: [255, 255, 255] },
+    { p: 1.00, c: [255, 255, 255] }
+  ];
+  function bgColor(p) {
+    for (var i = 0; i < bgStops.length - 1; i++) {
+      var a = bgStops[i], b = bgStops[i + 1];
+      if (p >= a.p && p <= b.p) {
+        var t = (p - a.p) / (b.p - a.p || 1);
+        var c = [0,1,2].map(function (k) { return Math.round(lerp(a.c[k], b.c[k], t)); });
+        return 'rgb(' + c.join(',') + ')';
+      }
+    }
+    return 'rgb(255,255,255)';
+  }
 
   function render(progress) {
-    // t: 0 -> fully messy, 1 -> fully clean. Ease so the untangle happens mostly in the middle.
-    var t = Math.min(1, Math.max(0, progress));
-    var eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    var p = Math.min(1, Math.max(0, progress));
 
-    paths.forEach(function (p, i) {
-      p.setAttribute('d', pathD(messy[i], clean[i], eased));
+    slides.forEach(function (s) {
+      var e = envelope(p, s);
+      s.el.style.opacity = e;
+      s.el.style.transform = 'scale(' + (0.97 + e * 0.03) + ') translateY(' + ((1 - e) * 18) + 'px)';
+      s.el.style.filter = 'blur(' + ((1 - e) * 5) + 'px)';
+      s.el.style.zIndex = e > 0.05 ? 2 : 1;
     });
 
-    messyLabelsGroup.style.opacity = Math.max(0, 1 - t * 2.2);
-    nodesGroup.style.opacity = Math.min(1, Math.max(0, (t - 0.55) * 2.6));
-    fillEl.style.width = (t * 100) + '%';
-    pctEl.textContent = Math.round(t * 100) + '%';
-    hintEl.style.opacity = t < 0.03 ? '0.8' : '0';
+    pin.style.backgroundColor = bgColor(p);
+    var light = p > 0.72;
+    pin.classList.toggle('light', light);
 
-    var idx = 0;
-    for (var i = 0; i < stages.length; i++) { if (t >= stages[i].at) idx = i; }
-    if (idx !== lastStageIdx) {
-      lastStageIdx = idx;
-      kickerEl.style.opacity = 0;
-      setTimeout(function () {
-        kickerEl.textContent = stages[idx].kicker;
-        titleEl.textContent = stages[idx].title;
-        subEl.textContent = stages[idx].sub;
-        kickerEl.style.opacity = 1;
-      }, 120);
+    hintEl.style.opacity = p < 0.02 ? '1' : '0';
+    railFill.style.width = (p * 100) + '%';
+    railPct.textContent = Math.round(p * 100) + '%';
+
+    // slide 2 diagnosis cards stagger in across its active window
+    var s2 = slides[1];
+    var s2Progress = 0;
+    if (p > s2.inEnd) {
+      s2Progress = (p - s2.inEnd) / ((s2.outStart) - s2.inEnd || 1);
     }
+    diagCards.forEach(function (card) {
+      var idx = parseInt(card.getAttribute('data-idx'), 10);
+      var threshold = idx * 0.2;
+      card.classList.toggle('show', s2Progress > threshold);
+    });
+
+    // slide 3 stat strip after the graph settles
+    statStrip.classList.toggle('show', p > 0.9);
   }
 
   function onScroll() {
