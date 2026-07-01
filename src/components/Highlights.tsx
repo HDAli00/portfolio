@@ -24,10 +24,10 @@ export default function Highlights({ highlights }: { highlights: Highlight[] }) 
         What production taught me to hold as non-negotiable.
       </h2>
       <p className="text-[17px] leading-[1.75] text-[#666] max-w-[560px] mb-9">
-        A running index of principles, the projects that earned them, and things I&apos;ve written. Each one has a scar behind it.
+        A running index of hard-earned principles — each one has a scar behind it.
       </p>
 
-      {present.length > 0 && (
+      {present.length > 1 && (
         <div className="flex flex-wrap gap-2 mb-2">
           <button
             onClick={() => setActive('all')}
@@ -72,11 +72,17 @@ export default function Highlights({ highlights }: { highlights: Highlight[] }) 
               }`}
             >
               <div className="w-28 shrink-0 pt-0.5">
-                <span className="block text-[11px] font-mono uppercase tracking-[0.08em] text-[#999]">
-                  {LABELS[h.type]}
-                </span>
+                {present.length > 1 && (
+                  <span className="block text-[11px] font-mono uppercase tracking-[0.08em] text-[#999]">
+                    {LABELS[h.type]}
+                  </span>
+                )}
                 {h.topic && (
-                  <span className="block text-[11px] font-mono text-[#999] mt-1 tracking-[0.02em]">{h.topic}</span>
+                  <span
+                    className={`block text-[11px] font-mono text-[#999] tracking-[0.02em] ${present.length > 1 ? 'mt-1' : ''}`}
+                  >
+                    {h.topic}
+                  </span>
                 )}
               </div>
               <div className="flex-1 min-w-0">

@@ -74,12 +74,4 @@ insert into highlights (type, topic, title, blurb, meta, href, sort_order) value
   ('principle', 'Ephemerality',
    'Every run begins from nothing and leaves nothing behind.',
    'A CI pipeline where each run gets a single-use pod and volume, wiped on exit — the clean-state guarantee that made self-service shipping safe.',
-   'Jenkins · Kubernetes · per-run PV teardown · ASML', '#', 3),
-  ('project', '2026',
-   'TrainTicket RCA Harness',
-   'A multi-agent incident-response system that diagnoses documented fault scenarios on a live microservice benchmark and proposes GitOps fixes.',
-   'EKS · Argo CD · LangGraph · Slack', '#', 4),
-  ('article', 'Ops Studio NL',
-   'How Kubernetes networking actually routes a packet',
-   'From the pod''s veth pair through the CNI to a Service and out — the path most tutorials skip.',
-   'Writing · ~9 min read', '#', 5);
+   'Jenkins · Kubernetes · per-run PV teardown · ASML', '#', 3);
