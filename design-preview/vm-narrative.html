@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Narrative section preview — chaos to clarity</title>
+<style>
+  :root {
+    --ink: #111111;
+    --sub: #666666;
+    --faint: #999999;
+    --line: #ececec;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #fff;
+    color: var(--ink);
+    font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- filler sections just to give scroll context, matching site rhythm ---- */
+  .filler {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 64px 48px;
+  }
+  .filler h1 {
+    font-size: clamp(36px, 5vw, 52px);
+    font-weight: 600;
+    line-height: 1.18;
+    letter-spacing: -0.025em;
+    max-width: 680px;
+    margin: 0 0 24px;
+  }
+  .filler p {
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--sub);
+    max-width: 540px;
+    margin: 0;
+  }
+  hr.divider {
+    max-width: 850px;
+    margin: 0 auto;
+    border: none;
+    border-top: 1px solid var(--line);
+  }
+  .section-label {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 8px;
+  }
+  .fake-row {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--line);
+    font-size: 15px;
+    color: var(--sub);
+  }
+
+  /* =========================================================
+     THE NARRATIVE SECTION
+     ========================================================= */
+  .story-wrap {
+    position: relative;
+    height: 320vh; /* scroll distance the story plays out over */
+  }
+  .story-pin {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .story-head {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 0 48px;
+    width: 100%;
+    text-align: left;
+  }
+  .story-kicker {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--faint);
+    text-transform: uppercase;
+    margin: 0 0 10px;
+    font-family: 'SFMono-Regular', Menlo, monospace;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .story-title {
+    font-size: clamp(26px, 3.4vw, 38px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin: 0 0 12px;
+    max-width: 620px;
+    min-height: 1.3em;
+  }
+  .story-sub {
+    font-size: 16px;
+    color: var(--sub);
+    line-height: 1.6;
+    max-width: 520px;
+    margin: 0;
+  }
+
+  .stage {
+    position: relative;
+    max-width: 850px;
+    margin: 32px auto 0;
+    padding: 0 48px;
+    width: 100%;
+    height: 46vh;
+    min-height: 320px;
+  }
+  .stage svg { width: 100%; height: 100%; overflow: visible; }
+
+  .wire {
+    fill: none;
+    stroke: #cfcfcf;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+  }
+  .wire.hot { stroke: #b8b8b8; }
+
+  .node {
+    fill: #fff;
+    stroke: var(--ink);
+    stroke-width: 1.3;
+  }
+  .node-dot {
+    fill: var(--ink);
+  }
+  .node-label {
+    font-size: 11px;
+    font-family: 'SFMono-Regular', Menlo, monospace;
+    fill: var(--sub);
+  }
+  .node-group {
+    cursor: pointer;
+  }
+  .node-group circle.node {
+    transition: stroke 0.15s ease;
+  }
+  .node-group:hover circle.node {
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+  .node-group:hover .node-label {
+    fill: var(--ink);
+  }
+
+  .messy-label {
+    font-size: 10.5px;
+    font-family: 'SFMono-Regular', Menlo, monospace;
+    fill: var(--faint);
+  }
+
+  /* annotation tooltip */
+  .annotation {
+    position: absolute;
+    max-width: 220px;
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    padding: 12px 14px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--sub);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 5;
+  }
+  .annotation strong {
+    display: block;
+    color: var(--ink);
+    font-size: 12.5px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .annotation.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .progress-rail {
+    max-width: 850px;
+    margin: 28px auto 0;
+    padding: 0 48px;
+    width: 100%;
+  }
+  .progress-track {
+    height: 2px;
+    background: var(--line);
+    position: relative;
+  }
+  .progress-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: var(--ink);
+    width: 0%;
+  }
+  .progress-caption {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--faint);
+    margin-top: 8px;
+    font-family: 'SFMono-Regular', Menlo, monospace;
+    letter-spacing: 0.02em;
+  }
+
+  .hint {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: var(--faint);
+    font-family: 'SFMono-Regular', Menlo, monospace;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="filler">
+    <h1>I build platform infrastructure<br>and write about engineering<br>at scale.</h1>
+    <p>Platform engineer at Capgemini, based in the Netherlands. I work on observability, Kubernetes, cloud-native pipelines, and the infrastructure other engineers rely on — quietly, reliably, at scale.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ================= STORY SECTION (this is the new piece, sits before Articles) ================= -->
+  <div class="story-wrap" id="storyWrap">
+    <div class="story-pin">
+      <div class="story-head">
+        <p class="story-kicker" id="kicker">01 — the starting point</p>
+        <h2 class="story-title" id="storyTitle">A cluster held together by SSH and hope.</h2>
+        <p class="story-sub" id="storySub">Manually provisioned EC2, drifted staging vs. prod, and configuration nobody could reproduce twice.</p>
+      </div>
+
+      <div class="stage">
+        <svg viewBox="0 0 750 320" preserveAspectRatio="xMidYMid meet">
+          <g id="wires"></g>
+          <g id="messyLabels"></g>
+          <g id="nodes" style="opacity:0"></g>
+        </svg>
+
+        <div class="annotation" id="ann-git">
+          <strong>Git as source of truth</strong>
+          Every manifest lives in the repo. No cluster state exists that isn't already committed.
+        </div>
+        <div class="annotation" id="ann-argo">
+          <strong>GitOps auto-sync</strong>
+          ArgoCD reconciles continuously and flags drift instead of letting it silently accumulate.
+        </div>
+        <div class="annotation" id="ann-kustomize">
+          <strong>Kustomize overlays</strong>
+          One base manifest, thin per-env overlays (dev/stg/prod) — no copy-pasted YAML forks to keep in sync.
+        </div>
+        <div class="annotation" id="ann-eks">
+          <strong>EKS + Karpenter</strong>
+          Spot-first autoscaling replaced fixed ASGs — right-sized nodes, provisioned in seconds.
+        </div>
+        <div class="annotation" id="ann-cost">
+          <strong>Cost, made visible</strong>
+          Consolidated six overlapping services into two. Usage-based dashboards replace end-of-month surprises.
+        </div>
+      </div>
+
+      <div class="progress-rail">
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-caption">
+          <span>chaos</span>
+          <span id="progressPct">0%</span>
+          <span>clarity</span>
+        </div>
+      </div>
+
+      <div class="hint" id="scrollHint">scroll to untangle it</div>
+    </div>
+  </div>
+  <!-- ================= /STORY SECTION ================= -->
+
+  <hr class="divider" />
+
+  <div class="filler" style="padding-top:64px; padding-bottom:36px;">
+    <p class="section-label">Latest Articles</p>
+  </div>
+  <div class="fake-row"><span>On-call, without the pager anxiety</span><span>Jun 12, 2026</span></div>
+  <div class="fake-row"><span>Kustomize overlays vs. Helm values: a real comparison</span><span>May 28, 2026</span></div>
+  <div class="fake-row"><span>What actually breaks when EKS nodes churn</span><span>May 3, 2026</span></div>
+
+<script>
+(function () {
+  // ---- messy wire control points (tangled) ----
+  var messy = [
+    [[40,60],[160,180],[90,250],[260,140],[380,70]],
+    [[60,220],[190,90],[300,250],[420,120],[520,200]],
+    [[100,30],[220,260],[340,60],[460,230],[600,90]],
+    [[30,160],[150,40],[260,220],[400,60],[540,180]],
+    [[120,290],[240,120],[360,270],[500,80],[640,220]],
+    [[200,20],[320,200],[440,40],[560,240],[690,110]]
+  ];
+
+  // ---- clean node graph target positions (final layout) ----
+  var nodes = [
+    { id:'git',       x:60,  y:160, label:'Git' , ann:'ann-git' },
+    { id:'argo',      x:220, y:80,  label:'ArgoCD', ann:'ann-argo' },
+    { id:'kustomize', x:220, y:240, label:'Kustomize', ann:'ann-kustomize' },
+    { id:'eks',       x:420, y:160, label:'EKS', ann:'ann-eks' },
+    { id:'cost',      x:620, y:160, label:'Cost', ann:'ann-cost' }
+  ];
+
+  // clean layout expressed as the SAME 6 wires, straightened into edges between the nodes above
+  var clean = [
+    [[60,160],[110,140],[160,110],[190,90],[220,80]],   // git -> argo
+    [[60,160],[110,180],[160,210],[190,230],[220,240]], // git -> kustomize
+    [[220,80],[280,100],[340,130],[380,150],[420,160]], // argo -> eks
+    [[220,240],[280,220],[340,190],[380,170],[420,160]],// kustomize -> eks
+    [[420,160],[480,160],[540,160],[580,160],[620,160]],// eks -> cost
+    [[220,80],[300,60],[380,60],[500,90],[620,160]]     // argo -> cost (oversight line)
+  ];
+
+  var wiresGroup = document.getElementById('wires');
+  var messyLabelsGroup = document.getElementById('messyLabels');
+  var nodesGroup = document.getElementById('nodes');
+  var paths = [];
+
+  messy.forEach(function (pts, i) {
+    var p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('class', 'wire' + (i % 2 === 0 ? ' hot' : ''));
+    wiresGroup.appendChild(p);
+    paths.push(p);
+  });
+
+  var messyTags = ['EC2 (manual)', 'SSH keys', 'drifted staging', 'no rollback', 'snowflake config', '3am pages'];
+  messyTags.forEach(function (t, i) {
+    var pt = messy[i][2];
+    var txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    txt.setAttribute('class', 'messy-label');
+    txt.setAttribute('x', pt[0] + 6);
+    txt.setAttribute('y', pt[1] - 6);
+    txt.textContent = t;
+    messyLabelsGroup.appendChild(txt);
+  });
+
+  nodes.forEach(function (n) {
+    var g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'node-group');
+    g.setAttribute('data-ann', n.ann);
+
+    var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    c.setAttribute('class', 'node');
+    c.setAttribute('cx', n.x);
+    c.setAttribute('cy', n.y);
+    c.setAttribute('r', 20);
+    g.appendChild(c);
+
+    var label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.setAttribute('class', 'node-label');
+    label.setAttribute('x', n.x);
+    label.setAttribute('y', n.y + 36);
+    label.setAttribute('text-anchor', 'middle');
+    label.textContent = n.label;
+    g.appendChild(label);
+
+    nodesGroup.appendChild(g);
+
+    g.addEventListener('mouseenter', function () {
+      var ann = document.getElementById(n.ann);
+      if (!ann) return;
+      var stage = document.querySelector('.stage');
+      var stageRect = stage.getBoundingClientRect();
+      var svg = stage.querySelector('svg');
+      var svgRect = svg.getBoundingClientRect();
+      var scaleX = svgRect.width / 750;
+      var scaleY = svgRect.height / 320;
+      var left = (n.x * scaleX) + (svgRect.left - stageRect.left) + 26;
+      var top = (n.y * scaleY) + (svgRect.top - stageRect.top) - 20;
+      ann.style.left = Math.min(left, stageRect.width - 232) + 'px';
+      ann.style.top = Math.max(top, 0) + 'px';
+      ann.classList.add('show');
+    });
+    g.addEventListener('mouseleave', function () {
+      var ann = document.getElementById(n.ann);
+      if (ann) ann.classList.remove('show');
+    });
+  });
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function pathD(a, b, t) {
+    var pts = a.map(function (p, i) {
+      return [lerp(p[0], b[i][0], t), lerp(p[1], b[i][1], t)];
+    });
+    return 'M ' + pts[0][0] + ' ' + pts[0][1] +
+      ' C ' + pts[1][0] + ' ' + pts[1][1] + ', ' + pts[2][0] + ' ' + pts[2][1] + ', ' + pts[3][0] + ' ' + pts[3][1] +
+      ' S ' + pts[4][0] + ' ' + pts[4][1] + ', ' + pts[4][0] + ' ' + pts[4][1];
+  }
+
+  var stages = [
+    { at: 0.0,  kicker: '01 — the starting point', title: 'A cluster held together by SSH and hope.', sub: 'Manually provisioned EC2, drifted staging vs. prod, and configuration nobody could reproduce twice.' },
+    { at: 0.35, kicker: '02 — pulling the thread', title: 'Every change starts moving through one path.', sub: 'Config gets collapsed into Git. Nothing touches the cluster that isn’t already reviewable.' },
+    { at: 0.65, kicker: '03 — the shape settles', title: 'GitOps, Kustomize overlays, and autoscaling that fits.', sub: 'ArgoCD reconciles state continuously. Kustomize keeps environments thin and consistent. Karpenter right-sizes nodes.' },
+    { at: 0.9,  kicker: '04 — what it costs now', title: 'Fewer moving parts. A bill you can explain.', sub: 'Six overlapping services became two. The architecture is small enough to hold in your head.' }
+  ];
+
+  var kickerEl = document.getElementById('kicker');
+  var titleEl = document.getElementById('storyTitle');
+  var subEl = document.getElementById('storySub');
+  var fillEl = document.getElementById('progressFill');
+  var pctEl = document.getElementById('progressPct');
+  var hintEl = document.getElementById('scrollHint');
+  var wrap = document.getElementById('storyWrap');
+
+  var lastStageIdx = -1;
+
+  function render(progress) {
+    // t: 0 -> fully messy, 1 -> fully clean. Ease so the untangle happens mostly in the middle.
+    var t = Math.min(1, Math.max(0, progress));
+    var eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+    paths.forEach(function (p, i) {
+      p.setAttribute('d', pathD(messy[i], clean[i], eased));
+    });
+
+    messyLabelsGroup.style.opacity = Math.max(0, 1 - t * 2.2);
+    nodesGroup.style.opacity = Math.min(1, Math.max(0, (t - 0.55) * 2.6));
+    fillEl.style.width = (t * 100) + '%';
+    pctEl.textContent = Math.round(t * 100) + '%';
+    hintEl.style.opacity = t < 0.03 ? '0.8' : '0';
+
+    var idx = 0;
+    for (var i = 0; i < stages.length; i++) { if (t >= stages[i].at) idx = i; }
+    if (idx !== lastStageIdx) {
+      lastStageIdx = idx;
+      kickerEl.style.opacity = 0;
+      setTimeout(function () {
+        kickerEl.textContent = stages[idx].kicker;
+        titleEl.textContent = stages[idx].title;
+        subEl.textContent = stages[idx].sub;
+        kickerEl.style.opacity = 1;
+      }, 120);
+    }
+  }
+
+  function onScroll() {
+    var rect = wrap.getBoundingClientRect();
+    var total = rect.height - window.innerHeight;
+    var scrolled = -rect.top;
+    var progress = total > 0 ? scrolled / total : 0;
+    render(progress);
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+})();
+</script>
+
+</body>
+</html>
