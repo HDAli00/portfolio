@@ -33,3 +33,14 @@ export type Project = {
   github_url: string
   sort_order: number
 }
+
+export type Highlight = {
+  id: string
+  type: 'principle' | 'project' | 'article'
+  topic: string | null
+  title: string
+  blurb: string
+  meta: string | null
+  href: string
+  sort_order: number
+}
