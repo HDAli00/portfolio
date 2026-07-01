@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sample D — Warm Serif · Hassan Ali</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     SAMPLE D — "WARM SERIF"
+     Paper-warm background, Fraunces display serif, one deep-green
+     accent, soft cards that lift on hover, and a slow ambient
+     gradient behind the hero. Sophistication through warmth and
+     typography rather than starkness.
+     ============================================================ */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --paper:#faf8f4; --card:#ffffff; --ink:#1c1a17; --sub:#5f5a52; --faint:#98917f;
+    --line:#e9e4da; --accent:#2e5e4e; --accent-soft:#eef2ec;
+    --f-serif:'Fraunces',Georgia,serif;
+    --f-body:'Inter',system-ui,sans-serif;
+    --f-mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+  body{background:var(--paper);color:var(--ink);font-family:var(--f-body);line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:#2e5e4e22}
+  .wrap{max-width:920px;margin:0 auto;padding-inline:clamp(20px,5vw,48px)}
+
+  .rv{opacity:0;transform:translateY(18px);transition:opacity .75s ease,transform .75s cubic-bezier(.2,.6,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    .rv{opacity:1;transform:none;transition:none}
+    .blob{animation:none!important}
+    *{transition-duration:.01ms!important}
+  }
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(250,248,244,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding-block:20px}
+  .logo{font-family:var(--f-serif);font-size:18px;font-weight:500;letter-spacing:-.01em}
+  .nav-links{display:flex;gap:26px;align-items:center}
+  .nav-links a{font-size:14px;color:var(--sub);transition:color .2s;position:relative}
+  .nav-links a:hover{color:var(--accent)}
+  .nav-cta{font-size:13.5px;font-weight:500;color:#fff!important;background:var(--accent);border-radius:99px;padding:8px 18px;transition:transform .25s cubic-bezier(.2,.6,.2,1),box-shadow .25s}
+  .nav-cta:hover{transform:translateY(-1px);box-shadow:0 6px 16px #2e5e4e33;color:#fff!important}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding-block:104px 96px;overflow:hidden}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;pointer-events:none}
+  .blob.a{width:480px;height:480px;background:#dfe8dc;top:-160px;right:-120px;animation:drift 18s ease-in-out infinite alternate}
+  .blob.b{width:360px;height:360px;background:#f3e8d8;bottom:-140px;left:-100px;animation:drift 22s ease-in-out infinite alternate-reverse}
+  @keyframes drift{to{transform:translate(60px,40px) scale(1.12)}}
+  .hero .wrap{position:relative}
+  .kicker{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:28px;display:flex;align-items:center;gap:10px}
+  .kicker::before{content:"";display:block;width:28px;height:1px;background:var(--accent)}
+  h1{font-family:var(--f-serif);font-size:clamp(40px,5.8vw,64px);font-weight:500;line-height:1.12;letter-spacing:-.015em;max-width:18ch}
+  h1 em{font-style:italic;color:var(--accent)}
+  .lede{font-size:17.5px;line-height:1.8;color:var(--sub);max-width:52ch;margin-top:28px}
+  .hero-cta{display:flex;gap:14px;margin-top:40px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:8px;font-size:14.5px;font-weight:500;border-radius:99px;padding:12px 24px;transition:transform .25s cubic-bezier(.2,.6,.2,1),box-shadow .25s,background .2s}
+  .btn.solid{background:var(--ink);color:var(--paper)}
+  .btn.solid:hover{transform:translateY(-2px);box-shadow:0 8px 20px #1c1a1733}
+  .btn.ghost{border:1px solid var(--line);color:var(--ink);background:var(--card)}
+  .btn.ghost:hover{transform:translateY(-2px);border-color:var(--faint)}
+  .btn svg{transition:transform .25s}
+  .btn:hover svg{transform:translateX(3px)}
+
+  /* ---------- sections ---------- */
+  section{padding-block:92px;border-top:1px solid var(--line)}
+  .eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);display:flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";display:block;width:28px;height:1px;background:var(--faint)}
+  h2{font-family:var(--f-serif);font-size:clamp(28px,3.6vw,40px);font-weight:500;letter-spacing:-.015em;line-height:1.18;margin-top:18px;max-width:24ch}
+  h2 em{font-style:italic;color:var(--accent)}
+  .sec-sub{color:var(--sub);font-size:16.5px;line-height:1.75;max-width:54ch;margin-top:16px}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px}
+  .more{font-size:14px;font-weight:500;color:var(--accent);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+  .more svg{transition:transform .25s}
+  .more:hover svg{transform:translateX(3px)}
+
+  /* note cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:48px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px;position:relative;
+    transition:transform .35s cubic-bezier(.2,.6,.2,1),box-shadow .35s,border-color .35s;display:flex;flex-direction:column}
+  .card:hover{transform:translateY(-5px);box-shadow:0 16px 36px #1c1a1712;border-color:#ddd6c8}
+  .card .tag{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);
+    background:var(--accent-soft);border-radius:99px;padding:5px 12px;align-self:flex-start}
+  .card h3{font-family:var(--f-serif);font-size:20px;font-weight:500;line-height:1.35;margin-top:18px;letter-spacing:-.01em}
+  .card p{font-size:14px;color:var(--sub);line-height:1.7;margin-top:10px;flex:1}
+  .card .meta{font-family:var(--f-mono);font-size:11px;color:var(--faint);margin-top:20px}
+  .stagger.in .card{animation:cardIn .6s cubic-bezier(.2,.6,.2,1) both}
+  .stagger.in .card:nth-child(1){animation-delay:.05s}
+  .stagger.in .card:nth-child(2){animation-delay:.15s}
+  .stagger.in .card:nth-child(3){animation-delay:.25s}
+  @keyframes cardIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.stagger.in .card{animation:none}}
+
+  /* article list */
+  .arts{margin-top:48px}
+  .art{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:baseline;padding:28px 6px;border-top:1px solid var(--line);
+    transition:padding-left .3s cubic-bezier(.2,.6,.2,1)}
+  .art:last-child{border-bottom:1px solid var(--line)}
+  .art:hover{padding-left:18px}
+  .art h3{font-family:var(--f-serif);font-size:22px;font-weight:500;letter-spacing:-.01em;line-height:1.3;
+    background-image:linear-gradient(var(--accent),var(--accent));background-size:0% 1px;background-repeat:no-repeat;background-position:0 100%;
+    transition:background-size .35s cubic-bezier(.2,.6,.2,1);display:inline}
+  .art:hover h3{background-size:100% 1px}
+  .art p{font-size:14.5px;color:var(--sub);line-height:1.7;margin-top:8px;max-width:58ch}
+  .art .date{font-family:var(--f-mono);font-size:12px;color:var(--faint);white-space:nowrap}
+
+  /* contact */
+  .contact-card{margin-top:48px;background:var(--ink);color:var(--paper);border-radius:20px;padding:clamp(32px,5vw,56px);
+    display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:center}
+  .contact-card h3{font-family:var(--f-serif);font-size:clamp(26px,3.4vw,36px);font-weight:500;line-height:1.2;letter-spacing:-.01em}
+  .contact-card h3 em{font-style:italic;color:#9fc3ae}
+  .contact-card p{color:#b8b2a6;font-size:15px;line-height:1.75;margin-top:14px;max-width:44ch}
+  .c-list{display:flex;flex-direction:column;gap:2px}
+  .c-list a{display:flex;justify-content:space-between;align-items:center;padding:16px 4px;border-bottom:1px solid #ffffff1e;
+    font-size:15px;font-weight:500;color:var(--paper);transition:padding-left .25s}
+  .c-list a:first-child{border-top:1px solid #ffffff1e}
+  .c-list a:hover{padding-left:12px}
+  .c-list a svg{color:#8d877b;transition:transform .25s,color .2s}
+  .c-list a:hover svg{transform:translate(2px,-2px);color:#9fc3ae}
+  @media (max-width:720px){.contact-card{grid-template-columns:1fr}}
+
+  footer{border-top:1px solid var(--line)}
+  .foot-in{display:flex;justify-content:space-between;align-items:center;padding-block:34px;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--faint)}
+  .foot-in .serif{font-family:var(--f-serif);font-style:italic}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="#">Hassan Ali</a>
+    <div class="nav-links">
+      <a href="#writing">Writing</a>
+      <a href="#projects">Projects</a>
+      <a class="nav-cta" href="#contact">Get in touch</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="blob a"></div>
+  <div class="blob b"></div>
+  <div class="wrap">
+    <p class="kicker rv in">Platform Engineer — Netherlands</p>
+    <h1 class="rv in">Building the infrastructure engineers <em>quietly rely on.</em></h1>
+    <p class="lede rv in">I'm Hassan — platform engineer at Capgemini. I work on observability, Kubernetes,
+      and cloud-native pipelines, and I write long-form about what production actually teaches you.</p>
+    <div class="hero-cta rv in">
+      <a class="btn solid" href="#writing">Read the writing
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg></a>
+      <a class="btn ghost" href="#contact">Say hello</a>
+    </div>
+  </div>
+</header>
+
+<section id="notes">
+  <div class="wrap">
+    <div class="rv">
+      <p class="eyebrow">Field notes</p>
+      <h2>What production taught me to hold as <em>non-negotiable.</em></h2>
+      <p class="sec-sub">A running index of hard-earned principles — each one has a scar behind it.</p>
+    </div>
+    <div class="cards stagger rv">
+      <a class="card" href="#">
+        <span class="tag">Observability</span>
+        <h3>Alert on symptoms, never on causes.</h3>
+        <p>Cause-based alerts rot the moment the architecture shifts. Page on what the user feels; let dashboards explain why.</p>
+        <span class="meta">Note 014 — June 2026</span>
+      </a>
+      <a class="card" href="#">
+        <span class="tag">Kubernetes</span>
+        <h3>If a human has to SSH in, the platform has failed.</h3>
+        <p>Every manual intervention is a missing abstraction. Count them, then delete them one by one.</p>
+        <span class="meta">Note 011 — March 2026</span>
+      </a>
+      <a class="card" href="#">
+        <span class="tag">Pipelines</span>
+        <h3>Boring pipelines are a feature, not a gap.</h3>
+        <p>Clever CI is a liability at 2 a.m. The best deploy is the one nobody has to think about.</p>
+        <span class="meta">Note 009 — January 2026</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="writing">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <p class="eyebrow">Writing</p>
+        <h2>Latest <em>articles</em></h2>
+      </div>
+      <a class="more" href="#">All writing
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg></a>
+    </div>
+    <div class="arts rv">
+      <a class="art" href="#">
+        <span>
+          <h3>The observability tax nobody budgets for</h3>
+          <p>Cardinality is a cost model, not a config flag. How we cut our metrics bill 60% without losing a single signal.</p>
+        </span>
+        <span class="date">Jun 14, 2026</span>
+      </a>
+      <a class="art" href="#">
+        <span>
+          <h3>Kubernetes upgrades as a product, not a project</h3>
+          <p>Why cluster upgrades keep hurting, and the cadence-and-contract model that finally made them routine.</p>
+        </span>
+        <span class="date">Apr 2, 2026</span>
+      </a>
+      <a class="art" href="#">
+        <span>
+          <h3>OpenTelemetry in anger: a field report</h3>
+          <p>Six months of instrumenting real services — what the docs get right, and the collector pipeline nobody shows you.</p>
+        </span>
+        <span class="date">Feb 19, 2026</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <p class="eyebrow">Projects</p>
+        <h2>Built and <em>maintained</em></h2>
+      </div>
+      <a class="more" href="#">GitHub
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></a>
+    </div>
+    <div class="cards stagger rv" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+      <a class="card" href="#">
+        <span class="tag">Go · Kubernetes</span>
+        <h3 style="font-family:var(--f-mono);font-size:16px;font-weight:500">drift-watch</h3>
+        <p>Detects config drift between Git and live clusters, and opens the PR that reconciles it.</p>
+        <span class="meta">Active — 214 stars</span>
+      </a>
+      <a class="card" href="#">
+        <span class="tag">Python · OTel</span>
+        <h3 style="font-family:var(--f-mono);font-size:16px;font-weight:500">span-lint</h3>
+        <p>CI linter for OpenTelemetry instrumentation — catches missing attributes before they cost you a night.</p>
+        <span class="meta">Active — 89 stars</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="contact" style="padding-bottom:100px">
+  <div class="wrap">
+    <div class="rv">
+      <p class="eyebrow">Contact</p>
+    </div>
+    <div class="contact-card rv">
+      <div>
+        <h3>Got a question, a project, or a <em>production war story?</em></h3>
+        <p>I'm reachable and I answer. Pick whichever channel feels right — email gets the fastest response.</p>
+      </div>
+      <div class="c-list">
+        <a href="#"><span>GitHub</span>
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></a>
+        <a href="#"><span>LinkedIn</span>
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></a>
+        <a href="#"><span>hello@hdalidocs.dev</span>
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>© 2026 Hassan Ali</span>
+    <span class="serif">Made slowly, in Amsterdam.</span>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

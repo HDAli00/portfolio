@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sample B — Systems Dark · Hassan Ali</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     SAMPLE B — "SYSTEMS DARK"
+     Leans into the platform-engineer identity. Near-black canvas,
+     mono type as a first-class citizen, an ambient node-graph
+     animation behind the hero, terminal-style status board, and
+     phosphor-green accents. Minimal but alive.
+     ============================================================ */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0b0d10; --panel:#101318; --ink:#e8eaed; --sub:#9aa2ad; --faint:#5c6470;
+    --line:#1d2229; --green:#3ddc84; --amber:#f5b83d;
+    --f-body:'Inter',system-ui,sans-serif;
+    --f-mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  }
+  html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+  body{background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:#3ddc8433}
+  .wrap{max-width:960px;margin:0 auto;padding-inline:clamp(20px,5vw,48px)}
+
+  .rv{opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.6,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    .rv{opacity:1;transform:none;transition:none}
+    canvas{display:none}
+    .blink,.led{animation:none!important}
+    *{transition-duration:.01ms!important}
+  }
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(11,13,16,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding-block:18px}
+  .logo{font-family:var(--f-mono);font-size:14px;color:var(--ink)}
+  .logo span{color:var(--green)}
+  .nav-links{display:flex;gap:26px}
+  .nav-links a{font-family:var(--f-mono);font-size:13px;color:var(--sub);transition:color .2s}
+  .nav-links a:hover{color:var(--green)}
+  .nav-links a::before{content:"./"; color:var(--faint)}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding-block:100px 80px;overflow:hidden;border-bottom:1px solid var(--line)}
+  #net{position:absolute;inset:0;width:100%;height:100%;opacity:.5}
+  .hero .wrap{position:relative}
+  .prompt{font-family:var(--f-mono);font-size:13.5px;color:var(--sub);margin-bottom:26px}
+  .prompt .path{color:var(--green)}
+  .blink{display:inline-block;width:8px;height:16px;background:var(--green);vertical-align:text-bottom;margin-left:2px;animation:blink 1s step-end infinite}
+  @keyframes blink{50%{opacity:0}}
+  h1{font-size:clamp(34px,5vw,54px);font-weight:600;line-height:1.15;letter-spacing:-.025em;max-width:20ch}
+  h1 em{font-style:normal;color:var(--green)}
+  .lede{font-size:16.5px;color:var(--sub);line-height:1.75;max-width:52ch;margin-top:24px}
+
+  /* status board */
+  .board{margin-top:44px;border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden;max-width:640px}
+  .board-head{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-family:var(--f-mono);font-size:11.5px;color:var(--faint)}
+  .board-head .dots{display:flex;gap:6px;margin-right:6px}
+  .board-head .dots i{width:9px;height:9px;border-radius:50%;background:#2a3038}
+  .board-body{padding:14px 16px;font-family:var(--f-mono);font-size:12.5px;line-height:2}
+  .brow{display:flex;justify-content:space-between;gap:16px;color:var(--sub)}
+  .brow .k{color:var(--faint)}
+  .led{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:8px;vertical-align:middle}
+  .led.ok{background:var(--green);box-shadow:0 0 8px #3ddc8466;animation:led 2.4s ease-in-out infinite}
+  .led.warn{background:var(--amber);box-shadow:0 0 8px #f5b83d55}
+  @keyframes led{50%{opacity:.5}}
+  .ok-t{color:var(--green)} .warn-t{color:var(--amber)}
+
+  /* ---------- sections ---------- */
+  section{padding-block:84px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-family:var(--f-mono);font-size:12px;color:var(--green);margin-bottom:14px}
+  .eyebrow::before{content:"# "}
+  h2{font-size:clamp(24px,3vw,32px);font-weight:600;letter-spacing:-.02em;line-height:1.25;max-width:26ch}
+  .sec-sub{color:var(--sub);font-size:15.5px;line-height:1.7;max-width:56ch;margin-top:12px}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+  .more{font-family:var(--f-mono);font-size:12.5px;color:var(--sub);white-space:nowrap;transition:color .2s}
+  .more:hover{color:var(--green)}
+
+  /* card grid for notes */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:40px}
+  .card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:22px;position:relative;overflow:hidden;
+    transition:transform .3s cubic-bezier(.2,.6,.2,1),border-color .3s}
+  .card::after{content:"";position:absolute;inset:0;background:radial-gradient(400px 120px at var(--mx,50%) 0%,#3ddc840d,transparent);opacity:0;transition:opacity .3s}
+  .card:hover{transform:translateY(-3px);border-color:#2c343e}
+  .card:hover::after{opacity:1}
+  .card .tag{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .card h3{font-size:16px;font-weight:600;line-height:1.4;margin-top:10px;letter-spacing:-.01em}
+  .card p{font-size:13.5px;color:var(--sub);line-height:1.65;margin-top:8px}
+  .card .meta{font-family:var(--f-mono);font-size:11px;color:var(--faint);margin-top:16px;display:block}
+
+  /* log-style article list */
+  .log{margin-top:40px;font-family:var(--f-mono)}
+  .log a{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:baseline;padding:16px 12px;
+    border-top:1px solid var(--line);font-size:13.5px;transition:background .2s}
+  .log a:last-child{border-bottom:1px solid var(--line)}
+  .log a:hover{background:#ffffff06}
+  .log .ts{color:var(--faint);font-size:12px}
+  .log .t{color:var(--ink);font-family:var(--f-body);font-size:15px;font-weight:500;letter-spacing:-.01em}
+  .log .t small{display:block;color:var(--sub);font-weight:400;font-size:13.5px;margin-top:4px;font-family:var(--f-body)}
+  .log .lvl{font-size:11px;padding:3px 8px;border-radius:4px;border:1px solid var(--line);color:var(--sub)}
+  .log a:hover .lvl{color:var(--green);border-color:#3ddc8444}
+
+  /* projects */
+  .proj{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:40px}
+  .p-card{border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:22px;transition:transform .3s cubic-bezier(.2,.6,.2,1),border-color .3s}
+  .p-card:hover{transform:translateY(-3px);border-color:#2c343e}
+  .p-card .name{font-family:var(--f-mono);font-size:14.5px;font-weight:600;color:var(--ink);display:flex;align-items:center;gap:10px}
+  .p-card .name svg{color:var(--faint)}
+  .p-card p{font-size:13.5px;color:var(--sub);line-height:1.65;margin-top:10px}
+  .p-card .stack{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
+  .p-card .stack span{font-family:var(--f-mono);font-size:10.5px;color:var(--sub);border:1px solid var(--line);border-radius:99px;padding:3px 10px}
+
+  /* contact */
+  .term{margin-top:36px;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:20px;font-family:var(--f-mono);font-size:13.5px;max-width:560px}
+  .term .ln{color:var(--sub);line-height:2.1}
+  .term .ln b{color:var(--ink);font-weight:500}
+  .term .ln a{color:var(--green);border-bottom:1px dashed #3ddc8455}
+  .term .ln a:hover{border-bottom-style:solid}
+  .term .ln .k{color:var(--faint)}
+
+  footer{padding-block:36px}
+  .foot-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-family:var(--f-mono);font-size:12px;color:var(--faint)}
+  :focus-visible{outline:2px solid var(--green);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="#"><span>~</span>/hassan-ali</a>
+    <div class="nav-links">
+      <a href="#writing">writing</a>
+      <a href="#projects">projects</a>
+      <a href="#contact">contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <canvas id="net" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <p class="prompt rv in"><span class="path">hassan@prod</span>:~$ whoami<span class="blink"></span></p>
+    <h1 class="rv in">Platform engineer.<br/>I keep <em>production</em> boring.</h1>
+    <p class="lede rv in">Observability, Kubernetes, and cloud-native pipelines at Capgemini, Netherlands.
+      I build the infrastructure other engineers rely on — quietly, reliably, at scale — and write about what it teaches me.</p>
+
+    <div class="board rv in" role="img" aria-label="Current status board">
+      <div class="board-head">
+        <span class="dots"><i></i><i></i><i></i></span>
+        status --live
+      </div>
+      <div class="board-body">
+        <div class="brow"><span><span class="led ok"></span>clusters.watched</span><span class="ok-t">7 healthy</span></div>
+        <div class="brow"><span><span class="led ok"></span>pipelines.today</span><span class="ok-t">31 green</span></div>
+        <div class="brow"><span><span class="led warn"></span>current.obsession</span><span class="warn-t">otel collector internals</span></div>
+        <div class="brow"><span class="k">last.incident</span><span class="k" id="uptime">42 days ago</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="notes">
+  <div class="wrap">
+    <div class="rv">
+      <p class="eyebrow">field-notes</p>
+      <h2>Hard-earned principles from production.</h2>
+      <p class="sec-sub">Each one has a scar behind it. Updated whenever something breaks in a new and educational way.</p>
+    </div>
+    <div class="cards rv">
+      <a class="card" href="#">
+        <span class="tag">observability</span>
+        <h3>Alert on symptoms, never on causes.</h3>
+        <p>Cause-based alerts rot the moment the architecture shifts. Page on what the user feels.</p>
+        <span class="meta">note_014 · jun 2026</span>
+      </a>
+      <a class="card" href="#">
+        <span class="tag">kubernetes</span>
+        <h3>If a human has to SSH in, the platform failed.</h3>
+        <p>Every manual intervention is a missing abstraction. Count them, then delete them.</p>
+        <span class="meta">note_011 · mar 2026</span>
+      </a>
+      <a class="card" href="#">
+        <span class="tag">pipelines</span>
+        <h3>Boring pipelines are a feature.</h3>
+        <p>Clever CI is a liability at 2 a.m. The best deploy is one nobody thinks about.</p>
+        <span class="meta">note_009 · jan 2026</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="writing">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <p class="eyebrow">writing</p>
+        <h2>Latest articles</h2>
+      </div>
+      <a class="more" href="#">view --all →</a>
+    </div>
+    <div class="log rv">
+      <a href="#">
+        <span class="ts">2026-06-14</span>
+        <span class="t">The observability tax nobody budgets for
+          <small>Cardinality is a cost model, not a config flag. How we cut the metrics bill 60%.</small></span>
+        <span class="lvl">obs</span>
+      </a>
+      <a href="#">
+        <span class="ts">2026-04-02</span>
+        <span class="t">Kubernetes upgrades as a product, not a project
+          <small>The cadence-and-contract model that finally made cluster upgrades routine.</small></span>
+        <span class="lvl">k8s</span>
+      </a>
+      <a href="#">
+        <span class="ts">2026-02-19</span>
+        <span class="t">OpenTelemetry in anger: a field report
+          <small>Six months of instrumenting real services — the collector pipeline nobody shows you.</small></span>
+        <span class="lvl">otel</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <p class="eyebrow">projects</p>
+        <h2>Things I run and maintain</h2>
+      </div>
+      <a class="more" href="#">github →</a>
+    </div>
+    <div class="proj rv">
+      <a class="p-card" href="#">
+        <span class="name">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5.5 3.5 2 8l3.5 4.5M10.5 3.5 14 8l-3.5 4.5"/></svg>
+          drift-watch
+        </span>
+        <p>Detects config drift between Git and live clusters, then opens the PR that reconciles it.</p>
+        <span class="stack"><span>go</span><span>kubernetes</span><span>gitops</span></span>
+      </a>
+      <a class="p-card" href="#">
+        <span class="name">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5.5 3.5 2 8l3.5 4.5M10.5 3.5 14 8l-3.5 4.5"/></svg>
+          span-lint
+        </span>
+        <p>CI linter for OpenTelemetry instrumentation — catches missing attributes before they cost a debugging night.</p>
+        <span class="stack"><span>python</span><span>otel</span><span>ci</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="contact" style="border-bottom:none">
+  <div class="wrap">
+    <div class="rv">
+      <p class="eyebrow">contact</p>
+      <h2>Open a channel.</h2>
+    </div>
+    <div class="term rv">
+      <p class="ln"><span class="k">$</span> contact <b>--github</b>&nbsp;&nbsp;→ <a href="#">github.com/HDAli00</a></p>
+      <p class="ln"><span class="k">$</span> contact <b>--linkedin</b> → <a href="#">linkedin.com/in/hdali</a></p>
+      <p class="ln"><span class="k">$</span> contact <b>--email</b>&nbsp;&nbsp;&nbsp;→ <a href="#">hello@hdalidocs.dev</a></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>© 2026 hassan ali · built with next.js</span>
+    <span id="clock">--:--:-- CET</span>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveals
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  // Clock
+  const clock = document.getElementById('clock');
+  const tick = () => clock.textContent =
+    new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Europe/Amsterdam'}).format(new Date()) + ' CET';
+  tick(); setInterval(tick, 1000);
+
+  // Ambient node-graph in hero — nodes drift, close pairs get linked.
+  const cv = document.getElementById('net');
+  if (cv && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const ctx = cv.getContext('2d');
+    let W, H, nodes;
+    const N = 42, R = 130;
+    const reset = () => {
+      W = cv.width = cv.offsetWidth; H = cv.height = cv.offsetHeight;
+      nodes = Array.from({length:N}, () => ({
+        x: Math.random()*W, y: Math.random()*H,
+        vx: (Math.random()-.5)*.25, vy: (Math.random()-.5)*.25
+      }));
+    };
+    reset(); addEventListener('resize', reset);
+    (function frame(){
+      ctx.clearRect(0,0,W,H);
+      for (const n of nodes) {
+        n.x += n.vx; n.y += n.vy;
+        if (n.x<0||n.x>W) n.vx*=-1;
+        if (n.y<0||n.y>H) n.vy*=-1;
+      }
+      for (let i=0;i<N;i++) for (let j=i+1;j<N;j++) {
+        const a=nodes[i], b=nodes[j], d=Math.hypot(a.x-b.x,a.y-b.y);
+        if (d<R) {
+          ctx.strokeStyle = `rgba(61,220,132,${.14*(1-d/R)})`;
+          ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+        }
+      }
+      ctx.fillStyle = 'rgba(61,220,132,.45)';
+      for (const n of nodes) { ctx.beginPath(); ctx.arc(n.x,n.y,1.3,0,7); ctx.fill(); }
+      requestAnimationFrame(frame);
+    })();
+  }
+</script>
+</body>
+</html>

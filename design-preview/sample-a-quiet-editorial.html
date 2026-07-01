@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sample A — Quiet Editorial · Hassan Ali</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,400..700;1,14..32,400..600&family=Newsreader:ital,opsz,wght@1,6..72,400..500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     SAMPLE A — "QUIET EDITORIAL"
+     Closest evolution of the current site. Keeps the white,
+     hairline-rule minimalism but adds: typographic scale, a serif
+     italic accent, scroll-choreographed reveals, staggered lists,
+     real SVG iconography (no emoji), live micro-details (pulse dot,
+     local time), and consistent hover language.
+     ============================================================ */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#111; --sub:#555; --faint:#8a8a8a; --line:#eaeaea; --wash:#fafafa;
+    --accent:#2f5af5;
+    --f-body:'Inter',system-ui,sans-serif;
+    --f-serif:'Newsreader',Georgia,serif;
+    --f-mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  }
+  html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+  body{background:#fff;color:var(--ink);font-family:var(--f-body);line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:880px;margin:0 auto;padding-inline:clamp(20px,5vw,48px)}
+
+  /* ---------- reveal choreography ---------- */
+  .rv{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    .rv{opacity:1;transform:none;transition:none}
+    .marquee-track{animation:none!important}
+    .pulse::after{animation:none!important}
+    *{transition-duration:.01ms!important}
+  }
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding-block:20px}
+  .logo{font-weight:600;font-size:15px;letter-spacing:-.01em}
+  .nav-links{display:flex;gap:28px;align-items:center}
+  .nav-links a{font-size:14px;color:var(--sub);position:relative;transition:color .2s}
+  .nav-links a::after{content:"";position:absolute;left:0;bottom:-4px;height:1px;width:100%;background:var(--ink);transform:scaleX(0);transform-origin:right;transition:transform .25s cubic-bezier(.2,.6,.2,1)}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a:hover::after{transform:scaleX(1);transform-origin:left}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding-block:88px 72px;overflow:hidden}
+  .hero-grid{position:absolute;inset:0;pointer-events:none;
+    background-image:radial-gradient(circle,#00000010 1px,transparent 1px);
+    background-size:26px 26px;
+    -webkit-mask-image:radial-gradient(ellipse 60% 70% at 78% 20%,#000 0%,transparent 70%);
+            mask-image:radial-gradient(ellipse 60% 70% at 78% 20%,#000 0%,transparent 70%)}
+  .status{display:inline-flex;align-items:center;gap:10px;font-family:var(--f-mono);font-size:12.5px;color:var(--sub);
+    border:1px solid var(--line);border-radius:99px;padding:7px 14px;margin-bottom:32px;background:#fff}
+  .pulse{position:relative;width:7px;height:7px;border-radius:50%;background:#1fbf6b}
+  .pulse::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:1px solid #1fbf6b;opacity:0;animation:ping 2.2s cubic-bezier(0,0,.2,1) infinite}
+  @keyframes ping{0%{transform:scale(.5);opacity:.8}80%,100%{transform:scale(1.6);opacity:0}}
+  h1{font-size:clamp(38px,5.4vw,58px);font-weight:600;line-height:1.12;letter-spacing:-.028em;max-width:17ch}
+  h1 .serif{font-family:var(--f-serif);font-style:italic;font-weight:450;letter-spacing:-.01em}
+  h1 .w{display:inline-block;overflow:hidden;vertical-align:bottom}
+  h1 .w>span{display:inline-block;transform:translateY(110%);animation:rise .8s cubic-bezier(.2,.65,.2,1) forwards;animation-delay:calc(var(--i)*70ms)}
+  @keyframes rise{to{transform:none}}
+  @media (prefers-reduced-motion:reduce){h1 .w>span{transform:none;animation:none}}
+  .hero p.lede{font-size:17px;line-height:1.75;color:var(--sub);max-width:52ch;margin-top:28px}
+  .hero-meta{display:flex;gap:28px;margin-top:36px;font-family:var(--f-mono);font-size:12px;color:var(--faint);flex-wrap:wrap}
+  .hero-meta b{display:block;font-family:var(--f-body);font-size:20px;font-weight:600;color:var(--ink);letter-spacing:-.02em;margin-bottom:2px}
+
+  /* ---------- marquee (text-only, no fake logos) ---------- */
+  .marquee{border-block:1px solid var(--line);overflow:hidden;position:relative;margin-top:64px}
+  .marquee::before,.marquee::after{content:"";position:absolute;top:0;bottom:0;width:90px;z-index:2;pointer-events:none}
+  .marquee::before{left:0;background:linear-gradient(90deg,#fff,transparent)}
+  .marquee::after{right:0;background:linear-gradient(-90deg,#fff,transparent)}
+  .marquee-track{display:flex;width:max-content;animation:scroll 32s linear infinite}
+  .marquee:hover .marquee-track{animation-play-state:paused}
+  @keyframes scroll{to{transform:translateX(-50%)}}
+  .m-item{display:flex;align-items:center;gap:14px;padding:16px 30px;white-space:nowrap;
+    font-family:var(--f-mono);font-size:13px;color:var(--sub)}
+  .m-item .dot{width:4px;height:4px;border-radius:50%;background:#d4d4d4}
+
+  /* ---------- section scaffolding ---------- */
+  section{padding-block:88px;border-top:1px solid var(--line)}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:14px}
+  .eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+  .eyebrow .no{color:var(--accent);margin-right:10px}
+  h2{font-size:clamp(26px,3.4vw,36px);font-weight:600;letter-spacing:-.025em;line-height:1.2;max-width:24ch;margin-top:14px}
+  h2 .serif{font-family:var(--f-serif);font-style:italic;font-weight:450}
+  .sec-sub{color:var(--sub);font-size:16.5px;line-height:1.7;max-width:54ch;margin-top:14px}
+  .more{font-size:13.5px;color:var(--sub);display:inline-flex;align-items:center;gap:6px;transition:color .2s}
+  .more svg{transition:transform .25s cubic-bezier(.2,.6,.2,1)}
+  .more:hover{color:var(--ink)}.more:hover svg{transform:translateX(3px)}
+
+  /* ---------- rows (shared hover language) ---------- */
+  .rows{margin-top:44px}
+  .row{display:grid;grid-template-columns:110px 1fr auto;gap:24px;align-items:start;
+    padding:26px 14px;border-top:1px solid var(--line);position:relative;isolation:isolate;transition:padding-left .25s cubic-bezier(.2,.6,.2,1)}
+  .row:last-child{border-bottom:1px solid var(--line)}
+  .row::before{content:"";position:absolute;inset:0;background:var(--wash);z-index:-1;transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.2,.6,.2,1)}
+  .row:hover::before,.row:focus-visible::before{transform:scaleX(1)}
+  .row:hover{padding-left:22px}
+  .row .kind{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding-top:4px}
+  .row .kind .sub{display:block;margin-top:5px;text-transform:none;letter-spacing:.02em}
+  .row h3{font-size:17px;font-weight:600;letter-spacing:-.01em;line-height:1.35}
+  .row p{font-size:14.5px;color:var(--sub);line-height:1.6;margin-top:6px;max-width:58ch}
+  .row .meta{font-family:var(--f-mono);font-size:11.5px;color:var(--faint);margin-top:10px}
+  .row .arr{align-self:center;color:var(--faint);transition:transform .25s cubic-bezier(.2,.6,.2,1),color .2s}
+  .row:hover .arr{transform:translateX(4px);color:var(--ink)}
+  .stagger .row{transition-delay:0s}
+  .stagger.in .row{animation:rowIn .6s cubic-bezier(.2,.6,.2,1) both}
+  .stagger.in .row:nth-child(1){animation-delay:.05s}
+  .stagger.in .row:nth-child(2){animation-delay:.13s}
+  .stagger.in .row:nth-child(3){animation-delay:.21s}
+  .stagger.in .row:nth-child(4){animation-delay:.29s}
+  @keyframes rowIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.stagger.in .row{animation:none}}
+
+  /* ---------- contact ---------- */
+  .contact-links{margin-top:44px}
+  .c-row{display:flex;justify-content:space-between;align-items:center;padding:22px 14px;border-top:1px solid var(--line);
+    font-size:16px;font-weight:500;position:relative;isolation:isolate}
+  .c-row:last-child{border-bottom:1px solid var(--line)}
+  .c-row::before{content:"";position:absolute;inset:0;background:var(--wash);z-index:-1;transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.2,.6,.2,1)}
+  .c-row:hover::before{transform:scaleX(1)}
+  .c-row svg{color:var(--faint);transition:transform .25s,color .2s}
+  .c-row:hover svg{transform:translate(2px,-2px);color:var(--ink)}
+
+  footer{border-top:1px solid var(--line)}
+  .foot-in{display:flex;justify-content:space-between;align-items:center;padding-block:36px;flex-wrap:wrap;gap:12px;
+    font-size:13px;color:var(--faint)}
+  .foot-in .clock{font-family:var(--f-mono);font-size:12px}
+  :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  @media (max-width:640px){.row{grid-template-columns:1fr auto}.row .kind{display:none}.hero-meta{gap:20px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="#">Hassan Ali</a>
+    <div class="nav-links">
+      <a href="#writing">Writing</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-grid"></div>
+  <div class="wrap">
+    <div class="status rv in">
+      <span class="pulse"></span>
+      Platform Engineer · Capgemini · Netherlands
+    </div>
+    <h1 aria-label="I build the infrastructure other engineers quietly rely on.">
+      <span class="w"><span style="--i:0">I&nbsp;build&nbsp;the</span></span>
+      <span class="w"><span style="--i:1" class="serif">infrastructure</span></span><br/>
+      <span class="w"><span style="--i:2">other&nbsp;engineers</span></span>
+      <span class="w"><span style="--i:3" class="serif">quietly</span></span>
+      <span class="w"><span style="--i:4">rely&nbsp;on.</span></span>
+    </h1>
+    <p class="lede rv in">Observability, Kubernetes, and cloud-native pipelines — plus long-form
+      writing on what running them in production actually teaches you.</p>
+    <div class="hero-meta rv in">
+      <div><b>6+</b> years in platform</div>
+      <div><b>40+</b> services observed</div>
+      <div><b>12</b> field notes published</div>
+    </div>
+  </div>
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <!-- duplicated once for seamless loop -->
+      <div class="m-item">Kubernetes<span class="dot"></span></div>
+      <div class="m-item">OpenTelemetry<span class="dot"></span></div>
+      <div class="m-item">Terraform<span class="dot"></span></div>
+      <div class="m-item">AWS<span class="dot"></span></div>
+      <div class="m-item">Azure<span class="dot"></span></div>
+      <div class="m-item">Grafana<span class="dot"></span></div>
+      <div class="m-item">Python<span class="dot"></span></div>
+      <div class="m-item">Docker<span class="dot"></span></div>
+      <div class="m-item">Helm<span class="dot"></span></div>
+      <div class="m-item">Ansible<span class="dot"></span></div>
+      <div class="m-item">Kubernetes<span class="dot"></span></div>
+      <div class="m-item">OpenTelemetry<span class="dot"></span></div>
+      <div class="m-item">Terraform<span class="dot"></span></div>
+      <div class="m-item">AWS<span class="dot"></span></div>
+      <div class="m-item">Azure<span class="dot"></span></div>
+      <div class="m-item">Grafana<span class="dot"></span></div>
+      <div class="m-item">Python<span class="dot"></span></div>
+      <div class="m-item">Docker<span class="dot"></span></div>
+      <div class="m-item">Helm<span class="dot"></span></div>
+      <div class="m-item">Ansible<span class="dot"></span></div>
+    </div>
+  </div>
+</header>
+
+<section id="notes">
+  <div class="wrap">
+    <div class="rv">
+      <p class="eyebrow"><span class="no">01</span>Field notes</p>
+      <h2>What production taught me to hold as <span class="serif">non-negotiable.</span></h2>
+      <p class="sec-sub">A running index of hard-earned principles — each one has a scar behind it.</p>
+    </div>
+    <div class="rows stagger rv">
+      <a class="row" href="#">
+        <span class="kind">Principle<span class="sub">observability</span></span>
+        <span>
+          <h3>Alert on symptoms, never on causes.</h3>
+          <p>Cause-based alerts rot the moment the architecture shifts. Page on what the user feels; let dashboards explain why.</p>
+          <span class="meta">learned the hard way · 03:00 CET</span>
+        </span>
+        <svg class="arr" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+      </a>
+      <a class="row" href="#">
+        <span class="kind">Principle<span class="sub">kubernetes</span></span>
+        <span>
+          <h3>If a human has to SSH in, the platform has failed.</h3>
+          <p>Every manual intervention is a missing abstraction. Count them, then delete them one by one.</p>
+          <span class="meta">running tally: 3 left</span>
+        </span>
+        <svg class="arr" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+      </a>
+      <a class="row" href="#">
+        <span class="kind">Principle<span class="sub">pipelines</span></span>
+        <span>
+          <h3>Boring pipelines are a feature, not a gap.</h3>
+          <p>Clever CI is a liability at 2 a.m. The best deploy is one nobody has to think about.</p>
+          <span class="meta">est. 2023 · still true</span>
+        </span>
+        <svg class="arr" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="writing">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <p class="eyebrow"><span class="no">02</span>Writing</p>
+        <h2>Latest articles</h2>
+      </div>
+      <a class="more" href="#">View all
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+      </a>
+    </div>
+    <div class="rows stagger rv">
+      <a class="row" href="#">
+        <span class="kind">Jun 2026</span>
+        <span>
+          <h3>The observability tax nobody budgets for</h3>
+          <p>Cardinality is a cost model, not a config flag. How we cut our metrics bill 60% without losing a single signal.</p>
+        </span>
+        <svg class="arr" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+      </a>
+      <a class="row" href="#">
+        <span class="kind">Apr 2026</span>
+        <span>
+          <h3>Kubernetes upgrades as a product, not a project</h3>
+          <p>Why cluster upgrades keep hurting, and the cadence-and-contract model that finally made them routine.</p>
+        </span>
+        <svg class="arr" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+      </a>
+      <a class="row" href="#">
+        <span class="kind">Feb 2026</span>
+        <span>
+          <h3>OpenTelemetry in anger: a field report</h3>
+          <p>Six months of instrumenting real services — what the docs get right, and the collector pipeline nobody shows you.</p>
+        </span>
+        <svg class="arr" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div>
+        <p class="eyebrow"><span class="no">03</span>Projects</p>
+        <h2>Things I run <span class="serif">and maintain</span></h2>
+      </div>
+      <a class="more" href="#">GitHub
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg>
+      </a>
+    </div>
+    <div class="rows stagger rv">
+      <a class="row" href="#">
+        <span class="kind">Go · K8s</span>
+        <span>
+          <h3 style="font-family:var(--f-mono);font-size:15px">drift-watch</h3>
+          <p>Detects config drift between Git and live clusters, and opens the PR that reconciles it.</p>
+        </span>
+        <svg class="arr" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg>
+      </a>
+      <a class="row" href="#">
+        <span class="kind">Python · OTel</span>
+        <span>
+          <h3 style="font-family:var(--f-mono);font-size:15px">span-lint</h3>
+          <p>CI linter for OpenTelemetry instrumentation — catches missing attributes before they cost you a debugging night.</p>
+        </span>
+        <svg class="arr" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="rv">
+      <p class="eyebrow"><span class="no">04</span>Contact</p>
+      <h2>Talk platform <span class="serif">with me.</span></h2>
+      <p class="sec-sub">Got a question, a project, or a war story about production? Pick your channel.</p>
+    </div>
+    <div class="contact-links rv">
+      <a class="c-row" href="#"><span>GitHub</span>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></a>
+      <a class="c-row" href="#"><span>LinkedIn</span>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></a>
+      <a class="c-row" href="#"><span>hello@hdalidocs.dev</span>
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>© 2026 Hassan Ali</span>
+    <span class="clock" id="clock">--:--:-- CET · Amsterdam</span>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveals
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  // Live local clock — a small "moving part" that costs nothing
+  const clock = document.getElementById('clock');
+  const tick = () => clock.textContent =
+    new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Europe/Amsterdam'}).format(new Date()) + ' CET · Amsterdam';
+  tick(); setInterval(tick, 1000);
+</script>
+</body>
+</html>

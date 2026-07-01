@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sample C — Swiss Grid · Hassan Ali</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     SAMPLE C — "SWISS GRID"
+     International-typographic-style take: oversized tight type,
+     exposed grid rules, giant section indices, rows that invert
+     to solid black on hover, a big-type marquee, and a scroll
+     progress bar. Bold minimalism — still zero clutter.
+     ============================================================ */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --ink:#0a0a0a; --sub:#5a5a5a; --faint:#9b9b9b; --line:#e6e6e6;
+    --f:'Inter',system-ui,sans-serif;
+    --f-mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+  body{background:#fff;color:var(--ink);font-family:var(--f);line-height:1.5}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding-inline:clamp(20px,4vw,40px)}
+
+  /* scroll progress */
+  #prog{position:fixed;top:0;left:0;height:2px;background:var(--ink);width:0;z-index:60}
+
+  .rv{opacity:0;transform:translateY(22px);transition:opacity .8s cubic-bezier(.2,.6,.2,1),transform .8s cubic-bezier(.2,.6,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    .rv{opacity:1;transform:none;transition:none}
+    .big-marquee-track{animation:none!important}
+    h1 .ln span{transform:none;animation:none}
+    *{transition-duration:.01ms!important}
+  }
+
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--ink)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding-block:18px}
+  .logo{font-weight:700;font-size:15px;letter-spacing:-.02em;text-transform:uppercase}
+  .nav-links{display:flex;gap:0}
+  .nav-links a{font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;padding:8px 18px;border-left:1px solid var(--line);transition:background .2s,color .2s}
+  .nav-links a:hover{background:var(--ink);color:#fff}
+
+  /* ---------- hero ---------- */
+  .hero{padding-block:96px 0;border-bottom:1px solid var(--ink)}
+  .hero-top{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start}
+  .idx{font-family:var(--f-mono);font-size:12px;color:var(--faint);text-align:right;line-height:1.9}
+  h1{font-size:clamp(44px,8.2vw,104px);font-weight:700;line-height:.98;letter-spacing:-.045em;text-transform:uppercase}
+  h1 .ln{display:block;overflow:hidden}
+  h1 .ln span{display:block;transform:translateY(105%);animation:rise .9s cubic-bezier(.16,.8,.24,1) forwards;animation-delay:calc(var(--i)*110ms)}
+  h1 .outline{color:#fff;-webkit-text-stroke:1.5px var(--ink)}
+  @keyframes rise{to{transform:none}}
+  .hero-foot{display:grid;grid-template-columns:1fr 1fr;gap:24px;border-top:1px solid var(--line);margin-top:64px;padding-block:28px 36px}
+  .hero-foot p{font-size:15.5px;line-height:1.7;color:var(--sub);max-width:44ch}
+  .hero-foot .fact{font-family:var(--f-mono);font-size:12px;color:var(--faint);line-height:2.1;text-align:right}
+  .hero-foot .fact b{color:var(--ink);font-weight:500}
+
+  /* big type marquee */
+  .big-marquee{border-bottom:1px solid var(--ink);overflow:hidden;padding-block:18px}
+  .big-marquee-track{display:flex;width:max-content;animation:scroll 26s linear infinite;align-items:baseline}
+  .big-marquee:hover .big-marquee-track{animation-play-state:paused}
+  @keyframes scroll{to{transform:translateX(-50%)}}
+  .bm-item{font-size:clamp(20px,2.6vw,30px);font-weight:700;text-transform:uppercase;letter-spacing:-.02em;white-space:nowrap;padding-inline:28px;color:var(--ink)}
+  .bm-item.ghost{color:#fff;-webkit-text-stroke:1px var(--faint)}
+
+  /* ---------- sections ---------- */
+  section{border-bottom:1px solid var(--ink)}
+  .sec-grid{display:grid;grid-template-columns:minmax(120px,1fr) 3fr;gap:clamp(20px,4vw,56px);padding-block:88px}
+  .sec-no{font-size:clamp(48px,6vw,76px);font-weight:700;letter-spacing:-.04em;line-height:1;color:#fff;-webkit-text-stroke:1.5px var(--ink);position:sticky;top:96px;align-self:start}
+  .sec-label{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:14px;display:block;-webkit-text-stroke:0}
+  h2{font-size:clamp(24px,3vw,34px);font-weight:700;letter-spacing:-.03em;line-height:1.15;text-transform:uppercase;max-width:24ch}
+  .sec-sub{color:var(--sub);font-size:15.5px;line-height:1.7;max-width:52ch;margin-top:16px}
+
+  /* invert rows */
+  .rows{margin-top:44px;border-top:1px solid var(--ink)}
+  .row{display:grid;grid-template-columns:auto 1fr auto;gap:clamp(16px,3vw,40px);align-items:baseline;
+    padding:24px 16px;border-bottom:1px solid var(--ink);transition:background .22s,color .22s;position:relative}
+  .row:hover{background:var(--ink);color:#fff}
+  .row .no{font-family:var(--f-mono);font-size:12px;color:var(--faint);transition:color .22s}
+  .row:hover .no{color:#8a8a8a}
+  .row h3{font-size:clamp(17px,2vw,22px);font-weight:600;letter-spacing:-.02em;line-height:1.3}
+  .row p{font-size:14px;color:var(--sub);line-height:1.6;margin-top:6px;max-width:60ch;transition:color .22s}
+  .row:hover p{color:#b5b5b5}
+  .row .end{font-family:var(--f-mono);font-size:11.5px;color:var(--faint);white-space:nowrap;transition:color .22s;display:flex;align-items:center;gap:12px}
+  .row:hover .end{color:#fff}
+  .row .end svg{transition:transform .25s cubic-bezier(.2,.6,.2,1)}
+  .row:hover .end svg{transform:translateX(4px)}
+  .stagger.in .row{animation:rowIn .55s cubic-bezier(.2,.6,.2,1) both}
+  .stagger.in .row:nth-child(1){animation-delay:.04s}
+  .stagger.in .row:nth-child(2){animation-delay:.12s}
+  .stagger.in .row:nth-child(3){animation-delay:.2s}
+  .stagger.in .row:nth-child(4){animation-delay:.28s}
+  @keyframes rowIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.stagger.in .row{animation:none}}
+
+  /* contact */
+  .contact-big{padding-block:88px}
+  .contact-big h2{font-size:clamp(34px,5.4vw,64px);max-width:none}
+  .c-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));border:1px solid var(--ink);border-bottom:none;margin-top:48px}
+  .c-links a{padding:26px 22px;border-bottom:1px solid var(--ink);font-weight:600;font-size:16px;letter-spacing:-.01em;
+    display:flex;justify-content:space-between;align-items:center;transition:background .22s,color .22s}
+  .c-links a+a{border-left:1px solid var(--ink)}
+  .c-links a:hover{background:var(--ink);color:#fff}
+  .c-links a svg{transition:transform .25s}
+  .c-links a:hover svg{transform:translate(3px,-3px)}
+  @media (max-width:720px){.c-links a+a{border-left:none}}
+
+  footer{padding-block:30px}
+  .foot-in{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-family:var(--f-mono);font-size:11.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
+  :focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+  @media (max-width:720px){.sec-grid{grid-template-columns:1fr}.sec-no{position:static}.hero-foot{grid-template-columns:1fr}.hero-foot .fact{text-align:left}}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="#">Hassan Ali</a>
+    <div class="nav-links">
+      <a href="#writing">Writing</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-top">
+      <h1>
+        <span class="ln"><span style="--i:0">Platform</span></span>
+        <span class="ln"><span style="--i:1" class="outline">Infrastructure</span></span>
+        <span class="ln"><span style="--i:2">At Scale.</span></span>
+      </h1>
+      <div class="idx">
+        <div>52.37° N, 4.89° E</div>
+        <div>Amsterdam, NL</div>
+        <div id="clock">--:--</div>
+      </div>
+    </div>
+    <div class="hero-foot">
+      <p>Platform engineer at Capgemini. I work on observability, Kubernetes and cloud-native
+        pipelines — the infrastructure other engineers rely on, quietly and reliably — and I write about
+        what running it in production teaches.</p>
+      <div class="fact">
+        <div><b>Currently</b> — Capgemini, Platform Eng.</div>
+        <div><b>Focus</b> — Observability / K8s / IaC</div>
+        <div><b>Status</b> — Open to conversations</div>
+      </div>
+    </div>
+  </div>
+  <div class="big-marquee" aria-hidden="true">
+    <div class="big-marquee-track">
+      <span class="bm-item">Kubernetes</span><span class="bm-item ghost">OpenTelemetry</span>
+      <span class="bm-item">Terraform</span><span class="bm-item ghost">Grafana</span>
+      <span class="bm-item">AWS</span><span class="bm-item ghost">Azure</span>
+      <span class="bm-item">Python</span><span class="bm-item ghost">Helm</span>
+      <span class="bm-item">Kubernetes</span><span class="bm-item ghost">OpenTelemetry</span>
+      <span class="bm-item">Terraform</span><span class="bm-item ghost">Grafana</span>
+      <span class="bm-item">AWS</span><span class="bm-item ghost">Azure</span>
+      <span class="bm-item">Python</span><span class="bm-item ghost">Helm</span>
+    </div>
+  </div>
+</header>
+
+<section id="notes">
+  <div class="wrap sec-grid">
+    <div class="sec-no rv">01<span class="sec-label">Field Notes</span></div>
+    <div>
+      <div class="rv">
+        <h2>Non-negotiables, learned in production.</h2>
+        <p class="sec-sub">A running index of hard-earned principles — each one has a scar behind it.</p>
+      </div>
+      <div class="rows stagger rv">
+        <a class="row" href="#">
+          <span class="no">N–014</span>
+          <span><h3>Alert on symptoms, never on causes.</h3>
+            <p>Cause-based alerts rot when the architecture shifts. Page on what the user feels.</p></span>
+          <span class="end">OBS
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg></span>
+        </a>
+        <a class="row" href="#">
+          <span class="no">N–011</span>
+          <span><h3>If a human has to SSH in, the platform failed.</h3>
+            <p>Every manual intervention is a missing abstraction. Count them, then delete them.</p></span>
+          <span class="end">K8S
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg></span>
+        </a>
+        <a class="row" href="#">
+          <span class="no">N–009</span>
+          <span><h3>Boring pipelines are a feature, not a gap.</h3>
+            <p>Clever CI is a liability at 2 a.m. The best deploy is one nobody thinks about.</p></span>
+          <span class="end">CI/CD
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="writing">
+  <div class="wrap sec-grid">
+    <div class="sec-no rv">02<span class="sec-label">Writing</span></div>
+    <div>
+      <div class="rv"><h2>Latest articles</h2></div>
+      <div class="rows stagger rv">
+        <a class="row" href="#">
+          <span class="no">JUN 26</span>
+          <span><h3>The observability tax nobody budgets for</h3>
+            <p>Cardinality is a cost model, not a config flag. Cutting the metrics bill 60% without losing signal.</p></span>
+          <span class="end"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg></span>
+        </a>
+        <a class="row" href="#">
+          <span class="no">APR 26</span>
+          <span><h3>Kubernetes upgrades as a product, not a project</h3>
+            <p>The cadence-and-contract model that finally made cluster upgrades routine.</p></span>
+          <span class="end"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg></span>
+        </a>
+        <a class="row" href="#">
+          <span class="no">FEB 26</span>
+          <span><h3>OpenTelemetry in anger: a field report</h3>
+            <p>Six months instrumenting real services — the collector pipeline nobody shows you.</p></span>
+          <span class="end"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="wrap sec-grid">
+    <div class="sec-no rv">03<span class="sec-label">Projects</span></div>
+    <div>
+      <div class="rv"><h2>Built &amp; maintained</h2></div>
+      <div class="rows stagger rv">
+        <a class="row" href="#">
+          <span class="no">P–01</span>
+          <span><h3 style="font-family:var(--f-mono);text-transform:none;font-size:17px">drift-watch</h3>
+            <p>Detects config drift between Git and live clusters, then opens the reconciling PR.</p></span>
+          <span class="end">GO · K8S
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </a>
+        <a class="row" href="#">
+          <span class="no">P–02</span>
+          <span><h3 style="font-family:var(--f-mono);text-transform:none;font-size:17px">span-lint</h3>
+            <p>CI linter for OpenTelemetry instrumentation — catches missing attributes pre-merge.</p></span>
+          <span class="end">PY · OTEL
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contact" style="border-bottom:none">
+  <div class="wrap contact-big">
+    <div class="rv">
+      <span class="sec-label" style="color:var(--faint)">04 — Contact</span>
+      <h2 style="margin-top:18px">Let's talk<br/><span style="color:#fff;-webkit-text-stroke:1.5px var(--ink)">platform.</span></h2>
+    </div>
+    <div class="c-links rv">
+      <a href="#">GitHub
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></a>
+      <a href="#">LinkedIn
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></a>
+      <a href="#">Email
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <span>© 2026 Hassan Ali</span>
+    <span>Amsterdam — NL</span>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  // Scroll progress bar
+  const prog = document.getElementById('prog');
+  addEventListener('scroll', () => {
+    const h = document.documentElement;
+    prog.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+  }, { passive: true });
+
+  // Minute clock in hero index block
+  const clock = document.getElementById('clock');
+  const tick = () => clock.textContent =
+    new Intl.DateTimeFormat('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Amsterdam'}).format(new Date()) + ' CET';
+  tick(); setInterval(tick, 10000);
+</script>
+</body>
+</html>
