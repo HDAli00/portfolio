@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import TypewriterGreeting from '@/components/TypewriterGreeting'
 import TechMarquee from '@/components/TechMarquee'
+import Highlights from '@/components/Highlights'
 import Footer from '@/components/Footer'
-import { getPublishedArticles, getProjects } from '@/lib/data'
+import { getPublishedArticles, getProjects, getHighlights } from '@/lib/data'
 
 export const revalidate = 3600
 
@@ -15,9 +16,10 @@ function formatDate(iso: string) {
 }
 
 export default async function Home() {
-  const [articles, projects] = await Promise.all([
+  const [articles, projects, highlights] = await Promise.all([
     getPublishedArticles(),
     getProjects(),
+    getHighlights(),
   ])
 
   return (
@@ -42,6 +44,11 @@ export default async function Home() {
         <div className="pb-16">
           <TechMarquee />
         </div>
+
+        <hr className="max-w-[850px] mx-auto border-t border-[#ececec]" />
+
+        {/* HIGHLIGHTS */}
+        <Highlights highlights={highlights} />
 
         <hr className="max-w-[850px] mx-auto border-t border-[#ececec]" />
 

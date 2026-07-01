@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Selected Work — Hassan Ali</title>
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root{
+    --ink:#111111; --sub:#666666; --faint:#999999; --line:#ececec;
+    --f-body:'Inter','Helvetica Neue',Arial,sans-serif;
+    --f-mono:'SFMono-Regular',Menlo,Consolas,monospace;
+  }
+  html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  body{background:#fff;color:var(--ink);font-family:var(--f-body);line-height:1.6;}
+  .wrap{max-width:850px;margin:0 auto;padding:64px 48px 96px;}
+
+  /* header */
+  .eyebrow{font-family:var(--f-mono);font-size:13px;letter-spacing:.02em;text-transform:uppercase;color:var(--faint);margin-bottom:16px;}
+  h1{font-size:clamp(30px,4.4vw,44px);font-weight:600;line-height:1.16;letter-spacing:-.025em;max-width:22ch;margin-bottom:16px;}
+  h1 em{font-style:normal;font-weight:600;color:var(--ink);}
+  .intro{color:var(--sub);font-size:17px;line-height:1.75;max-width:56ch;margin-bottom:36px;}
+
+  /* filter */
+  .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+  .filter{font-family:var(--f-mono);font-size:12px;letter-spacing:.02em;color:var(--sub);background:none;border:1px solid var(--line);border-radius:20px;padding:6px 14px;cursor:pointer;transition:border-color .15s,color .15s;}
+  .filter:hover{border-color:var(--faint);color:var(--ink);}
+  .filter.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  /* list */
+  .list{list-style:none;margin-top:20px;}
+  .item{border-top:1px solid var(--line);}
+  .item:last-child{border-bottom:1px solid var(--line);}
+  .row{
+    display:grid;grid-template-columns:8rem 1fr 1.25rem;align-items:start;
+    gap:0 clamp(1rem,3vw,2rem);
+    padding:26px 8px 26px 14px;
+    text-decoration:none;color:inherit;position:relative;
+    border-left:2px solid transparent;transition:background .18s,border-color .18s;
+  }
+  .row:hover, .row:focus-visible{background:#fafafa;border-left-color:var(--ink);outline:none;}
+  .row:hover .title,.row:focus-visible .title{text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px;}
+  .row:hover .arrow,.row:focus-visible .arrow{transform:translateX(4px);color:var(--ink);opacity:1;}
+
+  .kind{padding-top:2px;}
+  .kind .tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);display:inline-block;}
+  .kind .sub{font-family:var(--f-mono);font-size:11px;color:var(--faint);display:block;margin-top:5px;letter-spacing:.02em;}
+
+  .title{font-size:17px;font-weight:600;line-height:1.35;letter-spacing:-.01em;color:var(--ink);}
+  .blurb{color:var(--sub);font-size:14.5px;line-height:1.6;margin-top:7px;max-width:60ch;}
+  .meta{font-family:var(--f-mono);font-size:11.5px;color:var(--faint);margin-top:10px;letter-spacing:.02em;}
+
+  .arrow{font-family:var(--f-mono);color:var(--faint);opacity:.6;align-self:center;transition:transform .18s,color .18s,opacity .18s;}
+
+  .empty{padding:40px 8px;color:var(--faint);font-family:var(--f-mono);font-size:13px;}
+
+  .foot{margin-top:28px;font-family:var(--f-mono);font-size:11.5px;color:var(--faint);letter-spacing:.02em;}
+
+  :focus-visible{outline:2px solid var(--ink);outline-offset:2px;}
+  @media (max-width:620px){
+    .row{grid-template-columns:1fr 1.2rem;gap:.5rem 1rem;}
+    .kind{grid-column:1 / -1;padding-top:0;}
+    .kind .sub{display:inline;margin-top:0;margin-left:.6rem;}
+  }
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="eyebrow">Field notes</p>
+  <h1>What production taught me to hold as <em>non-negotiable</em>.</h1>
+  <p class="intro">A running index of principles, the projects that earned them, and things I've written. Each one has a scar behind it.</p>
+
+  <div class="filters" id="filters" role="group" aria-label="Filter by type"></div>
+
+  <ul class="list" id="list"></ul>
+
+  <p class="foot" id="foot"></p>
+
+</div>
+
+<script>
+/* ─────────────────────────────────────────────────────────
+   EDIT HERE. One entry = one card. Add / reorder / remove freely.
+   This array is the placeholder for the Supabase "highlights" table —
+   same fields, so wiring the real read path later is a drop-in swap.
+   type: "principle" | "project" | "article"
+   ───────────────────────────────────────────────────────── */
+const HIGHLIGHTS = [
+  {
+    type:"principle", topic:"Observability",
+    title:"A system should tell you it's sick before you have to ask it.",
+    blurb:"Replaced box-by-box SSH log-reading with a full telemetry stack deployed inside air-gapped VMs — one dashboard instead of the login-and-tail ritual.",
+    meta:"OpenTelemetry · Grafana · Prometheus · ASML",
+    href:"#"
+  },
+  {
+    type:"principle", topic:"Reproducibility",
+    title:"If it only lives in the console, it doesn't exist.",
+    blurb:"A three-tier AWS application defined end to end as code — standing it up or rebuilding from scratch is a command, not an act of memory.",
+    meta:"ECS Fargate · RDS · ElastiCache · Terraform / Terragrunt",
+    href:"#"
+  },
+  {
+    type:"principle", topic:"Ephemerality",
+    title:"Every run begins from nothing and leaves nothing behind.",
+    blurb:"A CI pipeline where each run gets a single-use pod and volume, wiped on exit — the clean-state guarantee that made self-service shipping safe.",
+    meta:"Jenkins · Kubernetes · per-run PV teardown · ASML",
+    href:"#"
+  },
+
+  /* ── examples of how projects & articles slot into the same list ── */
+  {
+    type:"project", topic:"2026",
+    title:"TrainTicket RCA Harness",
+    blurb:"A multi-agent incident-response system that diagnoses documented fault scenarios on a live microservice benchmark and proposes GitOps fixes.",
+    meta:"EKS · Argo CD · LangGraph · Slack",
+    href:"#"
+  },
+  {
+    type:"article", topic:"Ops Studio NL",
+    title:"How Kubernetes networking actually routes a packet",
+    blurb:"From the pod's veth pair through the CNI to a Service and out — the path most tutorials skip.",
+    meta:"Writing · ~9 min read",
+    href:"#"
+  }
+];
+
+const CATS = {
+  principle:{ label:"Principle" },
+  project:  { label:"Project"   },
+  article:  { label:"Article"   }
+};
+
+const listEl = document.getElementById('list');
+const footEl = document.getElementById('foot');
+const filtersEl = document.getElementById('filters');
+let active = "all";
+
+/* build filters from the types actually present */
+const present = ["all", ...Object.keys(CATS).filter(k => HIGHLIGHTS.some(h=>h.type===k))];
+present.forEach(k=>{
+  const b=document.createElement('button');
+  b.className='filter'+(k==="all"?' on':'');
+  b.textContent = k==="all" ? "All" : CATS[k].label+"s";
+  b.dataset.k=k;
+  b.setAttribute('aria-pressed', k==="all");
+  b.addEventListener('click',()=>{ active=k; render(); });
+  filtersEl.appendChild(b);
+});
+
+function render(){
+  [...filtersEl.children].forEach(b=>{
+    const on=b.dataset.k===active;
+    b.classList.toggle('on',on); b.setAttribute('aria-pressed',on);
+  });
+  const rows = HIGHLIGHTS.filter(h=>active==="all"||h.type===active);
+  listEl.innerHTML = rows.length ? "" : '<li class="empty">Nothing here yet.</li>';
+  rows.forEach(h=>{
+    const cat=CATS[h.type];
+    const li=document.createElement('li'); li.className='item';
+    li.innerHTML=`
+      <a class="row" href="${h.href||'#'}">
+        <div class="kind">
+          <span class="tag">${cat.label}</span>
+          ${h.topic?`<span class="sub">${h.topic}</span>`:""}
+        </div>
+        <div class="main">
+          <div class="title">${h.title}</div>
+          <p class="blurb">${h.blurb}</p>
+          ${h.meta?`<p class="meta">${h.meta}</p>`:""}
+        </div>
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>`;
+    listEl.appendChild(li);
+  });
+  const total=HIGHLIGHTS.length;
+  footEl.textContent = active==="all"
+    ? `${total} entries · last updated ${new Date().toISOString().slice(0,10)}`
+    : `${rows.length} of ${total}`;
+}
+render();
+</script>
+</body>
+</html>

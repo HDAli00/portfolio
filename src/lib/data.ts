@@ -1,4 +1,4 @@
-import { supabase, type Article, type Project } from './supabase'
+import { supabase, type Article, type Project, type Highlight } from './supabase'
 
 export type ArticleListItem = Pick<Article, 'id' | 'slug' | 'title' | 'description' | 'published_at'>
 
@@ -39,6 +39,20 @@ export async function getProjects(): Promise<Project[]> {
       .order('sort_order', { ascending: true })
     if (error) return []
     return data ?? []
+  } catch {
+    return []
+  }
+}
+
+export async function getHighlights(): Promise<Highlight[]> {
+  try {
+    const { data, error } = await supabase
+      .from('highlights')
+      .select('id, type, topic, title, blurb, meta, href, sort_order')
+      .eq('published', true)
+      .order('sort_order', { ascending: true })
+    if (error) return []
+    return (data ?? []) as Highlight[]
   } catch {
     return []
   }
