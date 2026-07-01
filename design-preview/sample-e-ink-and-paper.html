@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sample E — Ink &amp; Paper · Hassan Ali</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,300..500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     SAMPLE E — "INK & PAPER"
+     The notebook, not the résumé. See STORY.md for the narrative.
+     Warm note-paper by day, the same desk under lamplight by night
+     (sun/moon morph toggle). A thread stitches down the margin and
+     draws itself as you read; field notes are a deck of ruled index
+     cards that shuffle; projects are questions, not deliverables.
+     ============================================================ */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root{
+    --paper:#f6f1e7; --card:#fdfaf2; --ink:#262014; --sub:#6c6252; --faint:#a2967e;
+    --line:#e2d8c3; --rule:#e9dfca; --accent:#bc4b2a; --accent-ink:#a03e21;
+    --accent-soft:#efdcCF; --glow:#e8d9be;
+    --f-serif:'Fraunces',Georgia,serif;
+    --f-body:'Inter',system-ui,sans-serif;
+    --f-mono:'JetBrains Mono',ui-monospace,monospace;
+  }
+  [data-theme="dark"]{
+    --paper:#181310; --card:#211b15; --ink:#ece2cf; --sub:#a4977f; --faint:#796d59;
+    --line:#33291f; --rule:#2c231b; --accent:#e0985c; --accent-ink:#eaa96f;
+    --accent-soft:#33261a; --glow:#2e2317;
+  }
+
+  html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+  body{background:var(--paper);color:var(--ink);font-family:var(--f-body);line-height:1.65;
+    overflow-x:hidden;transition:background-color .6s ease,color .6s ease}
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--accent);color:var(--paper)}
+  .wrap{max-width:760px;margin:0 auto;padding-inline:clamp(20px,5vw,40px)}
+
+  .rv{opacity:0;transform:translateY(16px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.6,.2,1)}
+  .rv.in{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){
+    .rv{opacity:1;transform:none;transition:none}
+    .blot{animation:none!important}
+    *{transition-duration:.01ms!important;animation-duration:.01ms!important}
+  }
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--paper) 88%,transparent);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);transition:background-color .6s ease,border-color .6s ease}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;padding-block:18px}
+  .logo{font-family:var(--f-serif);font-size:19px;font-weight:500;letter-spacing:-.01em}
+  .logo i{font-style:italic;color:var(--accent)}
+  .nav-right{display:flex;gap:24px;align-items:center}
+  .nav-right a{font-size:13.5px;color:var(--sub);position:relative;transition:color .2s}
+  .nav-right a::after{content:"";position:absolute;left:0;bottom:-4px;height:1px;width:100%;
+    background:var(--accent);transform:scaleX(0);transform-origin:right;transition:transform .3s cubic-bezier(.2,.6,.2,1)}
+  .nav-right a:hover{color:var(--ink)}
+  .nav-right a:hover::after{transform:scaleX(1);transform-origin:left}
+
+  /* sun/moon morph toggle */
+  #theme{background:none;border:1px solid var(--line);border-radius:99px;width:34px;height:34px;
+    display:grid;place-items:center;cursor:pointer;color:var(--sub);
+    transition:color .3s,border-color .3s,transform .4s cubic-bezier(.2,.6,.2,1)}
+  #theme:hover{color:var(--accent);border-color:var(--faint);transform:rotate(40deg)}
+  #theme .sun-core{transition:r .5s cubic-bezier(.6,0,.3,1.4)}
+  #theme .mask-c{transition:cx .5s cubic-bezier(.6,0,.3,1.4),cy .5s cubic-bezier(.6,0,.3,1.4)}
+  #theme .rays line{transform-origin:12px 12px;transition:opacity .4s,transform .5s cubic-bezier(.6,0,.3,1.4)}
+  [data-theme="dark"] #theme .sun-core{r:8.5}
+  [data-theme="dark"] #theme .mask-c{cx:15.5;cy:8.5}
+  [data-theme="dark"] #theme .rays line{opacity:0;transform:scale(.4)}
+
+  /* ---------- margin thread ---------- */
+  .rail{position:absolute;top:0;bottom:0;left:calc(50% - 30rem);width:1px;background:var(--line);
+    transition:background-color .6s ease}
+  .rail-fill{position:absolute;top:0;left:0;width:1px;height:0;background:var(--accent);transition:height .15s linear}
+  .knot{position:absolute;left:50%;transform:translate(-50%,-50%);width:9px;height:9px;border-radius:50%;
+    background:var(--paper);border:1.5px solid var(--faint);transition:background-color .4s,border-color .4s}
+  .knot.lit{background:var(--accent);border-color:var(--accent)}
+  .knot-label{position:absolute;right:16px;top:50%;transform:translateY(-50%);white-space:nowrap;
+    font-family:var(--f-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+    transition:color .4s}
+  .knot.lit .knot-label{color:var(--accent)}
+  @media (max-width:1180px){.rail{display:none}}
+
+  /* ---------- hero (ch. 0 — the desk) ---------- */
+  .hero{position:relative;padding-block:104px 88px}
+  .blot{position:absolute;width:440px;height:420px;right:-110px;top:20px;background:var(--glow);
+    opacity:.55;filter:blur(34px);z-index:-1;transition:background-color .6s ease;
+    border-radius:58% 42% 47% 53% / 45% 55% 45% 55%;
+    animation:morph 16s ease-in-out infinite alternate}
+  @keyframes morph{
+    0%  {border-radius:58% 42% 47% 53% / 45% 55% 45% 55%;transform:rotate(0deg) scale(1)}
+    50% {border-radius:42% 58% 55% 45% / 55% 42% 58% 45%;transform:rotate(8deg) scale(1.06)}
+    100%{border-radius:50% 50% 42% 58% / 42% 58% 50% 50%;transform:rotate(-6deg) scale(.97)}
+  }
+  .hand{font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);
+    display:flex;align-items:center;gap:12px;margin-bottom:30px}
+  .hand::before{content:"";width:34px;height:1px;background:var(--accent)}
+  h1{font-family:var(--f-serif);font-size:clamp(38px,5.6vw,58px);font-weight:450;line-height:1.14;letter-spacing:-.015em;max-width:19ch}
+  h1 em{font-style:italic;color:var(--accent);font-weight:400}
+  .lede{font-size:17px;line-height:1.8;color:var(--sub);max-width:52ch;margin-top:26px}
+  .chew{margin-top:34px;font-family:var(--f-mono);font-size:13px;color:var(--sub)}
+  .chew .k{color:var(--faint)}
+  #word{display:inline-block;color:var(--accent-ink);border-bottom:1px dashed var(--faint);padding-bottom:1px;
+    transition:opacity .35s ease,transform .35s ease,filter .35s ease}
+  #word.out{opacity:0;transform:translateY(-7px);filter:blur(4px)}
+  .margin-note{font-family:var(--f-mono);font-size:11.5px;color:var(--faint);margin-top:44px;max-width:40ch;line-height:1.8}
+  .margin-note b{color:var(--sub);font-weight:500}
+
+  /* ---------- chapter scaffolding ---------- */
+  section{padding-block:88px;border-top:1px solid var(--line);transition:border-color .6s ease}
+  .ch{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);
+    display:flex;align-items:baseline;gap:14px}
+  .ch b{color:var(--accent);font-weight:500}
+  h2{font-family:var(--f-serif);font-size:clamp(27px,3.4vw,36px);font-weight:450;line-height:1.2;letter-spacing:-.012em;
+    margin-top:18px;max-width:24ch}
+  h2 em{font-style:italic;color:var(--accent)}
+  .sec-sub{color:var(--sub);font-size:15.5px;line-height:1.75;max-width:54ch;margin-top:14px}
+
+  /* ---------- ch.1 — the deck ---------- */
+  .deck-zone{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;margin-top:48px}
+  .deck{position:relative;height:280px;max-width:600px;width:100%}
+  .card{position:absolute;inset:0;background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:30px 34px 26px 46px;overflow:hidden;
+    box-shadow:0 10px 30px -18px rgba(40,28,10,.35);
+    transition:transform .65s cubic-bezier(.25,.7,.25,1),opacity .5s ease,background-color .6s ease,border-color .6s ease}
+  /* ruled index-card texture + vermilion margin rule */
+  .card::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
+    background:repeating-linear-gradient(transparent 0 30px,var(--rule) 30px 31px)}
+  .card::after{content:"";position:absolute;top:0;bottom:0;left:32px;width:1px;background:var(--accent);opacity:.5}
+  .card.is-front{z-index:4}
+  .card.is-mid{z-index:3;transform:translateY(16px) scale(.965) rotate(.9deg)}
+  .card.is-back{z-index:2;transform:translateY(31px) scale(.925) rotate(-1.3deg)}
+  .card.is-hidden{z-index:1;opacity:0;transform:translateY(48px) scale(.9)}
+  .card .tag{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
+  .card h3{font-family:var(--f-serif);font-size:clamp(20px,2.6vw,26px);font-weight:450;font-style:italic;
+    line-height:1.35;margin-top:14px;letter-spacing:-.01em;max-width:24ch}
+  .card p{font-size:14px;color:var(--sub);line-height:1.7;margin-top:12px;max-width:52ch}
+  .card .meta{position:absolute;bottom:22px;left:46px;font-family:var(--f-mono);font-size:11px;color:var(--faint)}
+  .deck-ctl{display:flex;flex-direction:column;gap:14px;align-items:flex-end;padding-bottom:6px}
+  .deck-count{font-family:var(--f-mono);font-size:12px;color:var(--faint);letter-spacing:.1em}
+  .deck-btns{display:flex;gap:8px}
+  .deck-btns button{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--card);
+    color:var(--sub);cursor:pointer;display:grid;place-items:center;
+    transition:color .2s,border-color .2s,transform .25s cubic-bezier(.2,.6,.2,1),background-color .6s ease}
+  .deck-btns button:hover{color:var(--accent);border-color:var(--accent);transform:translateY(-2px)}
+  .deck-dots{display:flex;gap:7px}
+  .deck-dots i{width:6px;height:6px;border-radius:50%;background:var(--line);transition:background-color .3s,transform .3s}
+  .deck-dots i.on{background:var(--accent);transform:scale(1.25)}
+  @media (max-width:680px){.deck-zone{grid-template-columns:1fr}.deck-ctl{flex-direction:row;align-items:center;justify-content:space-between}}
+
+  /* ---------- ch.2 — thoughts ---------- */
+  .entries{margin-top:46px}
+  .entry{display:grid;grid-template-columns:92px 1fr;gap:26px;padding-block:30px;border-top:1px solid var(--line);
+    transition:border-color .6s ease}
+  .entry:last-child{border-bottom:1px solid var(--line)}
+  .entry .date{font-family:var(--f-mono);font-size:11.5px;color:var(--faint);padding-top:9px;line-height:1.7}
+  .entry h3{font-family:var(--f-serif);font-size:clamp(20px,2.6vw,25px);font-weight:450;letter-spacing:-.01em;line-height:1.35;display:inline;
+    background-image:linear-gradient(var(--accent),var(--accent));background-size:0% 1.5px;background-repeat:no-repeat;
+    background-position:0 96%;transition:background-size .4s cubic-bezier(.2,.6,.2,1)}
+  .entry:hover h3{background-size:100% 1.5px}
+  .entry .argues{font-size:14.5px;color:var(--sub);line-height:1.75;margin-top:9px;max-width:56ch}
+  .entry .argues .k{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-right:8px}
+  @media (max-width:560px){.entry{grid-template-columns:1fr}.entry .date{padding-top:0}}
+
+  /* ---------- ch.3 — experiments ---------- */
+  .exps{margin-top:46px;display:flex;flex-direction:column;gap:16px}
+  .exp{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:28px 32px;position:relative;overflow:hidden;
+    transition:transform .35s cubic-bezier(.2,.6,.2,1),box-shadow .35s,border-color .35s,background-color .6s ease}
+  .exp:hover{transform:translateY(-3px);box-shadow:0 16px 34px -20px rgba(40,28,10,.4);border-color:var(--faint)}
+  .exp .q{font-family:var(--f-serif);font-style:italic;font-size:clamp(19px,2.4vw,24px);font-weight:450;line-height:1.4;letter-spacing:-.01em}
+  .exp .q::before{content:"Q — ";font-family:var(--f-mono);font-style:normal;font-size:12px;letter-spacing:.12em;color:var(--accent-ink)}
+  .exp .a{font-size:14.5px;color:var(--sub);line-height:1.7;margin-top:12px;max-width:58ch}
+  .exp .foot{display:flex;justify-content:space-between;align-items:center;margin-top:20px;gap:12px;flex-wrap:wrap}
+  .exp .name{font-family:var(--f-mono);font-size:12.5px;color:var(--ink);font-weight:500}
+  .exp .name::before{content:"↳ ";color:var(--faint)}
+  .exp .stack{font-family:var(--f-mono);font-size:11px;color:var(--faint)}
+  .exp .go{position:absolute;top:24px;right:26px;color:var(--faint);transition:transform .3s,color .2s}
+  .exp:hover .go{transform:translate(3px,-3px);color:var(--accent)}
+
+  /* ---------- ch.4 — in the margin (currently) ---------- */
+  .now{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:0;margin-top:44px;
+    border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:border-color .6s ease}
+  .now div{padding:24px 26px;border-left:1px solid var(--line);transition:border-color .6s ease,background-color .6s ease;background:var(--card)}
+  .now div:first-child{border-left:none}
+  .now .k{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
+  .now p{font-family:var(--f-serif);font-style:italic;font-size:16.5px;line-height:1.5;margin-top:10px;color:var(--ink)}
+  @media (max-width:640px){.now div{border-left:none;border-top:1px solid var(--line)}.now div:first-child{border-top:none}}
+
+  /* ---------- ch.5 — write back ---------- */
+  .post{margin-top:46px;display:flex;flex-direction:column}
+  .post a{display:flex;justify-content:space-between;align-items:baseline;padding:22px 6px;border-top:1px solid var(--line);
+    transition:padding-left .3s cubic-bezier(.2,.6,.2,1),border-color .6s ease}
+  .post a:last-child{border-bottom:1px solid var(--line)}
+  .post a:hover{padding-left:18px}
+  .post .ch-name{font-family:var(--f-serif);font-size:20px;font-weight:450;letter-spacing:-.01em}
+  .post .ch-addr{font-family:var(--f-mono);font-size:12px;color:var(--faint);transition:color .2s}
+  .post a:hover .ch-addr{color:var(--accent)}
+  .ps{font-family:var(--f-mono);font-size:11.5px;color:var(--faint);margin-top:26px}
+  .ps b{color:var(--accent-ink);font-weight:500}
+
+  footer{border-top:1px solid var(--line);transition:border-color .6s ease}
+  .foot-in{display:flex;justify-content:space-between;align-items:center;padding-block:32px;flex-wrap:wrap;gap:12px;
+    font-family:var(--f-mono);font-size:11.5px;color:var(--faint)}
+  .foot-in .serif{font-family:var(--f-serif);font-style:italic;font-size:13.5px}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<div class="rail" id="rail" aria-hidden="true"><div class="rail-fill" id="railFill"></div></div>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="#">Hassan<i>’s notebook</i></a>
+    <div class="nav-right">
+      <a href="#thoughts">Thoughts</a>
+      <a href="#experiments">Experiments</a>
+      <a href="#writeback">Write back</a>
+      <button id="theme" aria-label="Toggle between day and lamplight">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+          <mask id="mm"><rect x="0" y="0" width="24" height="24" fill="#fff"/><circle class="mask-c" cx="28" cy="2" r="8" fill="#000"/></mask>
+          <circle class="sun-core" cx="12" cy="12" r="5.2" fill="currentColor" mask="url(#mm)"/>
+          <g class="rays" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/>
+            <line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/>
+            <line x1="4.6" y1="4.6" x2="6.4" y2="6.4"/><line x1="17.6" y1="17.6" x2="19.4" y2="19.4"/>
+            <line x1="4.6" y1="19.4" x2="6.4" y2="17.6"/><line x1="17.6" y1="6.4" x2="19.4" y2="4.6"/>
+          </g>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" data-knot="ch. 0 — the desk">
+  <div class="wrap" style="position:relative">
+    <div class="blot" aria-hidden="true"></div>
+    <p class="hand rv in">A notebook, not a résumé</p>
+    <h1 class="rv in">This is where I<br/>think <em>out loud.</em></h1>
+    <p class="lede rv in">I spend my days inside other people's infrastructure — watching it, wiring it,
+      occasionally being humbled by it. This page is where the thinking lands:
+      field notes, essays, and the small experiments they cause.</p>
+    <p class="chew rv in"><span class="k">right now I'm chewing on</span> <span id="word">collector pipelines</span></p>
+    <p class="margin-note rv in">— <b>marginalia:</b> platform engineer at Capgemini, Netherlands.
+      That's the job; this notebook is the rest of it.</p>
+  </div>
+</header>
+
+<section id="notes" data-knot="ch. 1 — field notes">
+  <div class="wrap">
+    <div class="rv">
+      <p class="ch"><b>Ch. 1</b> Field notes</p>
+      <h2>Principles with <em>scars</em> behind them.</h2>
+      <p class="sec-sub">One card per lesson, in the order production taught them.
+        Flip through — or let the deck riffle on its own.</p>
+    </div>
+    <div class="deck-zone rv">
+      <div class="deck" id="deck" aria-roledescription="carousel" aria-label="Field note cards">
+        <article class="card">
+          <span class="tag">Observability</span>
+          <h3>Alert on symptoms, never on causes.</h3>
+          <p>Cause-based alerts rot the moment the architecture shifts. Page on what the user feels; let dashboards explain why.</p>
+          <span class="meta">note 014 — learned at 03:00, CET</span>
+        </article>
+        <article class="card">
+          <span class="tag">Kubernetes</span>
+          <h3>If a human has to SSH in, the platform has failed.</h3>
+          <p>Every manual intervention is a missing abstraction. Count them. Then delete them, one by one.</p>
+          <span class="meta">note 011 — running tally: 3 left</span>
+        </article>
+        <article class="card">
+          <span class="tag">Pipelines</span>
+          <h3>Boring pipelines are a feature, not a gap.</h3>
+          <p>Clever CI is a liability at 2 a.m. The best deploy is the one nobody has to think about.</p>
+          <span class="meta">note 009 — est. 2023, still true</span>
+        </article>
+        <article class="card">
+          <span class="tag">On-call</span>
+          <h3>Runbooks are apologies written in advance.</h3>
+          <p>If the runbook has more than five steps, the fix belongs in code. Write the apology once, then automate it away.</p>
+          <span class="meta">note 007 — after incident #38</span>
+        </article>
+        <article class="card">
+          <span class="tag">Craft</span>
+          <h3>Quiet infrastructure is loud work.</h3>
+          <p>Nobody notices the platform when it's good. That silence is the deliverable — budget for it.</p>
+          <span class="meta">note 001 — the founding note</span>
+        </article>
+      </div>
+      <div class="deck-ctl">
+        <span class="deck-count" id="deckCount">01 / 05</span>
+        <div class="deck-dots" id="deckDots"></div>
+        <div class="deck-btns">
+          <button id="prev" aria-label="Previous card">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 8H3M7 3.5 2.5 8 7 12.5"/></svg>
+          </button>
+          <button id="next" aria-label="Next card">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h11M9 3.5 13.5 8 9 12.5"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="thoughts" data-knot="ch. 2 — thoughts">
+  <div class="wrap">
+    <div class="rv">
+      <p class="ch"><b>Ch. 2</b> Thoughts, written down</p>
+      <h2>Essays from the <em>engine room.</em></h2>
+    </div>
+    <div class="entries rv">
+      <a class="entry" href="#">
+        <span class="date">14 Jun<br/>2026</span>
+        <span>
+          <h3>The observability tax nobody budgets for</h3>
+          <p class="argues"><span class="k">argues</span>Cardinality is a cost model, not a config flag — and most teams find out from the invoice.</p>
+        </span>
+      </a>
+      <a class="entry" href="#">
+        <span class="date">02 Apr<br/>2026</span>
+        <span>
+          <h3>Kubernetes upgrades as a product, not a project</h3>
+          <p class="argues"><span class="k">argues</span>Upgrades hurt because they're treated as events. Give them a cadence and a contract, and they disappear.</p>
+        </span>
+      </a>
+      <a class="entry" href="#">
+        <span class="date">19 Feb<br/>2026</span>
+        <span>
+          <h3>OpenTelemetry in anger: a field report</h3>
+          <p class="argues"><span class="k">argues</span>The docs teach instrumentation; production teaches the collector. Six months of the second curriculum.</p>
+        </span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="experiments" data-knot="ch. 3 — experiments">
+  <div class="wrap">
+    <div class="rv">
+      <p class="ch"><b>Ch. 3</b> Built to find out</p>
+      <h2>Every project starts as a <em>question.</em></h2>
+      <p class="sec-sub">The code is just the way I argue with the question until one of us gives in.</p>
+    </div>
+    <div class="exps rv">
+      <a class="exp" href="#">
+        <svg class="go" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg>
+        <p class="q">Could config drift open its own pull request?</p>
+        <p class="a">It can. Watching Git and the live cluster disagree politely, then letting the robot file the paperwork.</p>
+        <div class="foot">
+          <span class="name">drift-watch</span>
+          <span class="stack">go · kubernetes · gitops</span>
+        </div>
+      </a>
+      <a class="exp" href="#">
+        <svg class="go" width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12 12 4M5.5 4H12v6.5"/></svg>
+        <p class="q">What if bad telemetry failed the build instead of the on-call?</p>
+        <p class="a">A linter for OpenTelemetry instrumentation — missing attributes get caught in CI, not at 3 a.m. with a flashlight.</p>
+        <div class="foot">
+          <span class="name">span-lint</span>
+          <span class="stack">python · otel · ci</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section id="now" data-knot="ch. 4 — in the margin">
+  <div class="wrap">
+    <div class="rv">
+      <p class="ch"><b>Ch. 4</b> In the margin</p>
+      <h2>Currently —</h2>
+    </div>
+    <div class="now rv">
+      <div><span class="k">Reading</span><p>“How Infrastructure Works” — Deb Chachra</p></div>
+      <div><span class="k">Building</span><p>an OTel collector you can actually reason about</p></div>
+      <div><span class="k">Wondering</span><p>whether platform teams should have SLAs or manners</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="writeback" data-knot="ch. 5 — write back">
+  <div class="wrap">
+    <div class="rv">
+      <p class="ch"><b>Ch. 5</b> Write back</p>
+      <h2>The margins are <em>open.</em></h2>
+      <p class="sec-sub">Disagree with a field note, borrow an experiment, or send a war story of your own. I read everything and answer most of it.</p>
+    </div>
+    <div class="post rv">
+      <a href="#"><span class="ch-name">Email</span><span class="ch-addr">hello@hdalidocs.dev</span></a>
+      <a href="#"><span class="ch-name">GitHub</span><span class="ch-addr">github.com/HDAli00</span></a>
+      <a href="#"><span class="ch-name">LinkedIn</span><span class="ch-addr">linkedin.com/in/hdali</span></a>
+    </div>
+    <p class="ps rv"><b>p.s.</b> the best messages start with “you're wrong about…”</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-in">
+    <span class="serif">Made slowly, in Amsterdam.</span>
+    <span id="clock">--:--:-- CET</span>
+    <span>© 2026 · this page is never finished</span>
+  </div>
+</footer>
+
+<script>
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- theme: day / lamplight ---------- */
+  const root = document.documentElement;
+  const saved = localStorage.getItem('theme');
+  if (saved) root.dataset.theme = saved;
+  document.getElementById('theme').addEventListener('click', () => {
+    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('theme', root.dataset.theme);
+  });
+
+  /* ---------- scroll reveals ---------- */
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  /* ---------- margin thread: draws with reading, knots at chapters ---------- */
+  const rail = document.getElementById('rail'), fill = document.getElementById('railFill');
+  const chapters = [...document.querySelectorAll('[data-knot]')];
+  const knots = chapters.map(sec => {
+    const k = document.createElement('div');
+    k.className = 'knot';
+    k.innerHTML = `<span class="knot-label">${sec.dataset.knot}</span>`;
+    rail.appendChild(k);
+    return k;
+  });
+  function layoutKnots() {
+    chapters.forEach((sec, i) => knots[i].style.top = (sec.offsetTop + 96) + 'px');
+  }
+  function drawThread() {
+    const y = scrollY + innerHeight * 0.45;
+    fill.style.height = Math.min(y, document.body.scrollHeight) + 'px';
+    knots.forEach(k => k.classList.toggle('lit', parseFloat(k.style.top) <= y));
+  }
+  layoutKnots(); drawThread();
+  addEventListener('resize', () => { layoutKnots(); drawThread(); }, { passive: true });
+  addEventListener('scroll', drawThread, { passive: true });
+
+  /* ---------- the deck: riffling index cards ---------- */
+  const deck = document.getElementById('deck');
+  const cards = [...deck.querySelectorAll('.card')];
+  const dotsBox = document.getElementById('deckDots');
+  const count = document.getElementById('deckCount');
+  const dots = cards.map((_, i) => {
+    const d = document.createElement('i');
+    dotsBox.appendChild(d);
+    return d;
+  });
+  let cur = 0, timer = null;
+  function layoutDeck() {
+    cards.forEach((c, i) => {
+      const pos = (i - cur + cards.length) % cards.length;
+      c.classList.remove('is-front', 'is-mid', 'is-back', 'is-hidden');
+      c.classList.add(pos === 0 ? 'is-front' : pos === 1 ? 'is-mid' : pos === 2 ? 'is-back' : 'is-hidden');
+      c.setAttribute('aria-hidden', pos !== 0);
+    });
+    count.textContent = String(cur + 1).padStart(2, '0') + ' / ' + String(cards.length).padStart(2, '0');
+    dots.forEach((d, i) => d.classList.toggle('on', i === cur));
+  }
+  const next = () => { cur = (cur + 1) % cards.length; layoutDeck(); };
+  const prev = () => { cur = (cur - 1 + cards.length) % cards.length; layoutDeck(); };
+  document.getElementById('next').addEventListener('click', () => { next(); pause(); });
+  document.getElementById('prev').addEventListener('click', () => { prev(); pause(); });
+  function play() { if (!reduced && !timer) timer = setInterval(next, 5200); }
+  function pause() { clearInterval(timer); timer = null; setTimeout(play, 9000); }
+  deck.addEventListener('pointerenter', () => { clearInterval(timer); timer = null; });
+  deck.addEventListener('pointerleave', play);
+  layoutDeck(); play();
+
+  /* ---------- rotating "chewing on…" ---------- */
+  const word = document.getElementById('word');
+  const chews = ['collector pipelines', 'boring deploys', 'cardinality budgets', 'platforms with manners'];
+  if (!reduced) {
+    let wi = 0;
+    setInterval(() => {
+      word.classList.add('out');
+      setTimeout(() => {
+        wi = (wi + 1) % chews.length;
+        word.textContent = chews[wi];
+        word.classList.remove('out');
+      }, 380);
+    }, 3600);
+  }
+
+  /* ---------- live clock ---------- */
+  const clock = document.getElementById('clock');
+  const tick = () => clock.textContent =
+    new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Amsterdam' }).format(new Date()) + ' CET';
+  tick(); setInterval(tick, 1000);
+</script>
+</body>
+</html>
