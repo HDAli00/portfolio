@@ -2,24 +2,24 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Admin portal
 
-Every piece of content on the site — articles, projects, highlights/principles, and all fixed copy (titles, headings, intros, contact links, footer) — is editable from the admin portal at **`/admin`**. It ships with the app, so deploying `main` deploys the portal too; no extra infrastructure is needed.
+Every piece of content on the site (articles, highlights/principles, and all fixed copy: titles, headings, intros, contact links, footer) is editable from the admin portal at **`/admin`**. It ships with the app, so deploying `main` deploys the portal too; no extra infrastructure is needed.
 
 ### One-time setup
 
-1. **Run the migration** — open the Supabase SQL editor and run `supabase/admin.sql` (after `supabase/schema.sql` if the base tables don't exist yet). It creates the `site_content` table and grants signed-in users write access to all content tables.
-2. **Create your admin user** — in Supabase → Authentication → Users, click "Add user" and set your email + password.
-3. **Disable public sign-ups** — in Supabase → Authentication → Sign In / Up, turn off new user sign-ups so nobody else can create an account. (Row Level Security grants write access to any authenticated user, so this step is what makes the portal yours alone.)
+1. **Run the migration**: open the Supabase SQL editor and run `supabase/admin.sql` (after `supabase/schema.sql` if the base tables don't exist yet). It creates the `site_content` table and grants signed-in users write access to all content tables.
+2. **Create your admin user**: in Supabase → Authentication → Users, click "Add user" and set your email + password.
+3. **Disable public sign-ups**: in Supabase → Authentication → Sign In / Up, turn off new user sign-ups so nobody else can create an account. (Row Level Security grants write access to any authenticated user, so this step is what makes the portal yours alone.)
 
-The app only needs the two env vars already in `.env.example` (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`) — set them in Vercel for production.
+The app only needs the two env vars already in `.env.example` (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`); set them in Vercel for production.
 
 ### Using it
 
 Visit `/admin`, sign in, and edit:
 
-- **Articles** — write, edit, publish/unpublish, and delete articles in a rich-text editor (headings, bold/italic, lists, quotes, code, links). Images inserted from the toolbar are uploaded to the `article-images` Supabase Storage bucket and served from its public CDN URL.
-- **Highlights** — the principles/field-notes index on the homepage.
-- **Messages** — an inbox for messages sent from the footer contact form. Messages are always stored here; they are also forwarded by email (via formsubmit.co) to `CONTACT_FORM_EMAIL` if set, otherwise to the public contact email from Site copy. The first forwarded message triggers a one-time FormSubmit activation email — click the link in it once to start receiving messages.
-- **Site copy** — every fixed string: hero heading and typewriter phrases, section headings, social links, writing-page intro, footer reach-out text, and SEO titles/descriptions.
+- **Articles**: write, edit, publish/unpublish, and delete articles in a rich-text editor (headings, bold/italic, lists, quotes, code, links). Images inserted from the toolbar are uploaded to the `article-images` Supabase Storage bucket and served from its public CDN URL.
+- **Highlights**: the principles/field-notes index on the homepage.
+- **Messages**: an inbox for messages sent from the footer contact form. Messages are always stored here; they are also forwarded by email (via formsubmit.co) to `CONTACT_FORM_EMAIL` if set, otherwise to the public contact email from Site copy. The first forwarded message triggers a one-time FormSubmit activation email; click the link in it once to start receiving messages.
+- **Site copy**: every fixed string: hero heading and typewriter phrases, section headings, social links, writing-page intro, footer reach-out text, and SEO titles/descriptions.
 
 Public pages are cached (ISR); saving in the admin revalidates them, so changes go live within seconds.
 

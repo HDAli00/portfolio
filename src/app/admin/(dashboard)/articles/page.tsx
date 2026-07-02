@@ -27,7 +27,7 @@ export default async function AdminArticlesPage() {
       </div>
 
       {articles.length === 0 ? (
-        <p className="text-[14px] text-[#999] py-8">No articles yet — write your first one.</p>
+        <p className="text-[14px] text-[#999] py-8">No articles yet. Write your first one.</p>
       ) : (
         <div className="flex flex-col">
           {articles.map((article, i) => (

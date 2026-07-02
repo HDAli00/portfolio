@@ -93,12 +93,12 @@ function Toolbar({ editor }: { editor: Editor }) {
       const res = await fetch('/admin/upload', { method: 'POST', body })
       const data = await res.json().catch(() => null)
       if (!res.ok || !data?.url) {
-        window.alert(data?.error ?? 'Upload failed — please try again.')
+        window.alert(data?.error ?? 'Upload failed. Please try again.')
         return
       }
       editor.chain().focus().setImage({ src: data.url, alt: file.name.replace(/\.[^.]+$/, '') }).run()
     } catch {
-      window.alert('Upload failed — please try again.')
+      window.alert('Upload failed. Please try again.')
     } finally {
       setUploading(false)
     }

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import LoginForm from '../ui/LoginForm'
 
 export const metadata: Metadata = {
-  title: 'Admin — Sign in',
+  title: 'Admin · Sign in',
   robots: { index: false, follow: false },
 }
 

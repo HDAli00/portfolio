@@ -15,7 +15,7 @@ export default function Highlights({
   highlights,
   eyebrow = 'Field notes',
   heading = 'What production taught me to hold as non-negotiable.',
-  intro = 'A running index of hard-earned principles — each one has a scar behind it.',
+  intro = 'A running index of hard-earned principles, each one with a scar behind it.',
 }: {
   highlights: Highlight[]
   eyebrow?: string

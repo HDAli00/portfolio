@@ -32,7 +32,7 @@ export default function ContactForm() {
     return (
       <div className="border border-[#d3ead9] bg-[#f4faf6] rounded-[10px] px-6 py-8 text-center">
         <p className="text-[15px] font-medium text-[#1e7d43] mb-1">Message sent</p>
-        <p className="text-[13px] text-[#666]">Thanks for reaching out — I&apos;ll get back to you.</p>
+        <p className="text-[13px] text-[#666]">Thanks for reaching out. I&apos;ll get back to you.</p>
       </div>
     )
   }

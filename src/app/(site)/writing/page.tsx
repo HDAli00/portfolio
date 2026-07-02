@@ -9,7 +9,7 @@ export const revalidate = 3600
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getSiteContent()
   return {
-    title: `${content.writing_title} — ${content.site_title}`,
+    title: `${content.writing_title} · ${content.site_title}`,
     description: content.writing_meta_description,
   }
 }

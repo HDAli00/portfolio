@@ -20,7 +20,7 @@ export async function createSupabaseServerClient() {
             cookieStore.set(name, value, options)
           )
         } catch {
-          // Called from a Server Component — cookies can only be written in
+          // Called from a Server Component; cookies can only be written in
           // Server Actions / Route Handlers; the proxy refreshes sessions.
         }
       },

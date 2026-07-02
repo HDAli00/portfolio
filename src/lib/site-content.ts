@@ -37,7 +37,7 @@ export const SITE_CONTENT_FIELDS: SiteContentField[] = [
   {
     key: 'hero_intro', label: 'Hero intro', group: 'Hero', multiline: true,
     default:
-      'Platform engineer at Capgemini, based in the Netherlands. I work on observability, Kubernetes, cloud-native pipelines, and the infrastructure other engineers rely on — quietly, reliably, at scale.',
+      'Platform engineer at Capgemini, based in the Netherlands. I work on observability, Kubernetes, cloud-native pipelines, and the infrastructure other engineers rely on: quietly, reliably, at scale.',
   },
 
   // Highlights section
@@ -48,7 +48,7 @@ export const SITE_CONTENT_FIELDS: SiteContentField[] = [
   },
   {
     key: 'highlights_intro', label: 'Intro', group: 'Highlights section', multiline: true,
-    default: 'A running index of hard-earned principles — each one has a scar behind it.',
+    default: 'A running index of hard-earned principles, each one with a scar behind it.',
   },
 
   // Articles section
@@ -61,7 +61,7 @@ export const SITE_CONTENT_FIELDS: SiteContentField[] = [
   {
     key: 'contact_email', label: 'Contact email', group: 'Contact & social links',
     hint: 'Shown in the footer; contact-form messages are forwarded here.',
-    default: 'hello@hdalidocs.dev',
+    default: 'hello@example.com',
   },
 
   // Writing page
@@ -79,7 +79,7 @@ export const SITE_CONTENT_FIELDS: SiteContentField[] = [
   { key: 'footer_heading', label: 'Reach-out heading', group: 'Footer', default: 'Reach out' },
   {
     key: 'footer_blurb', label: 'Reach-out intro', group: 'Footer', multiline: true,
-    default: 'Question, idea, or just want to talk platform engineering? Send a message — it lands straight in my inbox.',
+    default: 'Question, idea, or just want to talk platform engineering? Send a message. It lands straight in my inbox.',
   },
   { key: 'footer_copyright', label: 'Copyright line', group: 'Footer', default: '© 2025 Hassan Ali' },
 ]

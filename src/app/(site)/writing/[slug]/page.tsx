@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const [article, content] = await Promise.all([getArticleBySlug(slug), getSiteContent()])
   if (!article) return {}
   return {
-    title: `${article.title} — ${content.site_title}`,
+    title: `${article.title} · ${content.site_title}`,
     description: article.description,
   }
 }

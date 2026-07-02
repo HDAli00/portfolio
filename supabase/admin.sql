@@ -1,4 +1,4 @@
--- Admin portal migration — run this once in the Supabase SQL editor
+-- Admin portal migration. Run this once in the Supabase SQL editor
 -- (after schema.sql). It adds the editable site-copy table and grants
 -- full read/write access to authenticated users (i.e. you, the admin).
 --
