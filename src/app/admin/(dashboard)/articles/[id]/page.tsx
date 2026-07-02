@@ -27,8 +27,13 @@ export default async function EditArticlePage({ params }: { params: Promise<{ id
       <h1 className="text-[24px] font-semibold tracking-[-0.02em] text-[#111] mb-2">Edit article</h1>
       <p className="text-[13px] text-[#999] font-mono mb-8">
         {article.published ? (
-          <a href={`/writing/${article.slug}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#111]">
-            /writing/{article.slug} ↗
+          <a
+            href={`/writing/${article.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-[#111] underline underline-offset-2 decoration-[#dcdcdc]"
+          >
+            /writing/{article.slug}
           </a>
         ) : (
           <>/writing/{article.slug} (draft)</>

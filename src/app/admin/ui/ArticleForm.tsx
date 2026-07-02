@@ -4,6 +4,7 @@ import { useActionState } from 'react'
 import type { Article } from '@/lib/supabase'
 import { saveArticle, type ActionState } from '../actions'
 import { ErrorNote, FieldLabel, SubmitButton, inputClass, textareaClass } from './fields'
+import RichTextEditor from './RichTextEditor'
 
 function toDateInputValue(iso?: string) {
   if (!iso) return ''
@@ -38,14 +39,10 @@ export default function ArticleForm({ article }: { article?: Article }) {
         <textarea name="description" defaultValue={article?.description} className={`${textareaClass} min-h-[70px]`} />
       </label>
 
-      <label className="block">
-        <FieldLabel hint="HTML — rendered as-is on the article page">Content</FieldLabel>
-        <textarea
-          name="content"
-          defaultValue={article?.content}
-          className={`${textareaClass} min-h-[380px] font-mono text-[13px]`}
-        />
-      </label>
+      <div>
+        <FieldLabel>Content</FieldLabel>
+        <RichTextEditor name="content" initialHTML={article?.content} />
+      </div>
 
       <div className="flex items-end gap-6 flex-wrap">
         <label className="block">
