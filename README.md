@@ -16,7 +16,7 @@ The app only needs the two env vars already in `.env.example` (`NEXT_PUBLIC_SUPA
 
 Visit `/admin`, sign in, and edit:
 
-- **Articles** — write, edit, publish/unpublish, and delete articles (content is HTML).
+- **Articles** — write, edit, publish/unpublish, and delete articles in a rich-text editor (headings, bold/italic, lists, quotes, code, links). Images inserted from the toolbar are uploaded to the `article-images` Supabase Storage bucket and served from its public CDN URL.
 - **Projects** — name, description, stack, GitHub link, ordering.
 - **Highlights** — the principles/field-notes index on the homepage.
 - **Site copy** — every fixed string: hero heading and typewriter phrases, section headings, contact links, writing-page intro, footer, and SEO titles/descriptions.

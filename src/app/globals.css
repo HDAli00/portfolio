@@ -113,6 +113,18 @@ html {
   margin-bottom: 0;
 }
 
+.prose-article img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 1.75rem 0;
+}
+
+.rte-content img.ProseMirror-selectednode {
+  outline: 2px solid #4f7ef8;
+  outline-offset: 2px;
+}
+
 /* Admin rich text editor — same typography the published article uses */
 .rte-content {
   outline: none;

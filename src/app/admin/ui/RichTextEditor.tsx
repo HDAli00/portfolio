@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { EditorContent, useEditor, useEditorState, type Editor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import Image from '@tiptap/extension-image'
 
 type ToolbarState = {
   bold: boolean
@@ -61,6 +62,14 @@ const icon = (d: string) => (
   </svg>
 )
 
+const imageIcon = (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <circle cx="8.5" cy="8.5" r="1.5" />
+    <path d="M21 15l-5-5L5 21" />
+  </svg>
+)
+
 const ICONS = {
   bulletList: icon('M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01'),
   orderedList: icon('M10 6h11M10 12h11M10 18h11M4 6h1v4M4 10h2M6 18H4c0-1 2-2 2-3s-1-1.5-2-1'),
@@ -73,6 +82,28 @@ const ICONS = {
 }
 
 function Toolbar({ editor }: { editor: Editor }) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [uploading, setUploading] = useState(false)
+
+  const uploadImage = async (file: File) => {
+    setUploading(true)
+    try {
+      const body = new FormData()
+      body.append('file', file)
+      const res = await fetch('/admin/upload', { method: 'POST', body })
+      const data = await res.json().catch(() => null)
+      if (!res.ok || !data?.url) {
+        window.alert(data?.error ?? 'Upload failed — please try again.')
+        return
+      }
+      editor.chain().focus().setImage({ src: data.url, alt: file.name.replace(/\.[^.]+$/, '') }).run()
+    } catch {
+      window.alert('Upload failed — please try again.')
+    } finally {
+      setUploading(false)
+    }
+  }
+
   const state = useEditorState<ToolbarState>({
     editor,
     selector: ({ editor: e }) => ({
@@ -152,6 +183,20 @@ function Toolbar({ editor }: { editor: Editor }) {
       <ToolbarButton title="Link" active={state.link} onClick={setLink}>
         {ICONS.link}
       </ToolbarButton>
+      <ToolbarButton title="Insert image" disabled={uploading} onClick={() => fileInputRef.current?.click()}>
+        {uploading ? <span className="text-[11px] font-mono animate-pulse">…</span> : imageIcon}
+      </ToolbarButton>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={e => {
+          const file = e.target.files?.[0]
+          e.target.value = ''
+          if (file) uploadImage(file)
+        }}
+      />
       <ToolbarButton title="Divider line" onClick={() => editor.chain().focus().setHorizontalRule().run()}>
         {ICONS.hr}
       </ToolbarButton>
@@ -183,6 +228,7 @@ export default function RichTextEditor({
         heading: { levels: [2, 3] },
         link: { openOnClick: false },
       }),
+      Image,
     ],
     content: initialHTML,
     editorProps: {

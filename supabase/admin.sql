@@ -46,3 +46,25 @@ create policy "Authenticated can manage highlights"
   to authenticated
   using (true)
   with check (true);
+
+-- Storage bucket for images embedded in articles (public read; the
+-- article page serves them straight from the Supabase CDN URL)
+insert into storage.buckets (id, name, public)
+values ('article-images', 'article-images', true)
+on conflict (id) do update set public = true;
+
+create policy "Authenticated can read article images"
+  on storage.objects for select to authenticated
+  using (bucket_id = 'article-images');
+
+create policy "Authenticated can upload article images"
+  on storage.objects for insert to authenticated
+  with check (bucket_id = 'article-images');
+
+create policy "Authenticated can update article images"
+  on storage.objects for update to authenticated
+  using (bucket_id = 'article-images');
+
+create policy "Authenticated can delete article images"
+  on storage.objects for delete to authenticated
+  using (bucket_id = 'article-images');
