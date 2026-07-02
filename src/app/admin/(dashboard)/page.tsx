@@ -4,10 +4,10 @@ import { createSupabaseServerClient } from '@/lib/supabase/server'
 export default async function AdminOverviewPage() {
   const supabase = await createSupabaseServerClient()
 
-  const [articles, projects, highlights] = await Promise.all([
+  const [articles, highlights, messages] = await Promise.all([
     supabase.from('articles').select('id, published'),
-    supabase.from('projects').select('id'),
     supabase.from('highlights').select('id, published'),
+    supabase.from('contact_messages').select('id'),
   ])
 
   const articleRows = articles.data ?? []
@@ -21,16 +21,16 @@ export default async function AdminOverviewPage() {
       detail: `${articleRows.filter(a => a.published).length} published`,
     },
     {
-      href: '/admin/projects',
-      label: 'Projects',
-      count: (projects.data ?? []).length,
-      detail: 'shown on the homepage',
-    },
-    {
       href: '/admin/highlights',
       label: 'Highlights',
       count: highlightRows.length,
       detail: `${highlightRows.filter(h => h.published).length} published`,
+    },
+    {
+      href: '/admin/messages',
+      label: 'Messages',
+      count: (messages.data ?? []).length,
+      detail: 'sent from the footer contact form',
     },
     {
       href: '/admin/site',

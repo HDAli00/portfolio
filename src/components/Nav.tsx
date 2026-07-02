@@ -21,9 +21,6 @@ export default function Nav({ siteName = 'Hassan Ali' }: { siteName?: string }) 
           <Link href="/writing" className="text-[14px] text-[#666] hover:text-[#111] transition-colors no-underline hover:no-underline">
             Writing
           </Link>
-          <Link href="/projects" className="text-[14px] text-[#666] hover:text-[#111] transition-colors no-underline hover:no-underline">
-            Projects
-          </Link>
           <Link href="/#contact" className="text-[14px] text-[#666] hover:text-[#111] transition-colors no-underline hover:no-underline">
             Contact
           </Link>
@@ -50,7 +47,6 @@ export default function Nav({ siteName = 'Hassan Ali' }: { siteName?: string }) 
       {mobileOpen && (
         <div className="sm:hidden border-t border-[#ececec] px-6 py-4 flex flex-col gap-4">
           <Link href="/writing" className="text-[14px] text-[#666]" onClick={() => setMobileOpen(false)}>Writing</Link>
-          <Link href="/projects" className="text-[14px] text-[#666]" onClick={() => setMobileOpen(false)}>Projects</Link>
           <Link href="/#contact" className="text-[14px] text-[#666]" onClick={() => setMobileOpen(false)}>Contact</Link>
         </div>
       )}

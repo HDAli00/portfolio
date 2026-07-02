@@ -47,6 +47,32 @@ create policy "Authenticated can manage highlights"
   using (true)
   with check (true);
 
+-- Messages sent from the footer contact form
+create table if not exists contact_messages (
+  id         uuid primary key default gen_random_uuid(),
+  subject    text not null,
+  message    text not null,
+  created_at timestamptz not null default now()
+);
+
+alter table contact_messages enable row level security;
+
+-- Anyone may send a message; only the signed-in admin can read/manage them
+create policy "Anyone can send a message"
+  on contact_messages for insert
+  to anon, authenticated
+  with check (true);
+
+create policy "Authenticated can read messages"
+  on contact_messages for select
+  to authenticated
+  using (true);
+
+create policy "Authenticated can delete messages"
+  on contact_messages for delete
+  to authenticated
+  using (true);
+
 -- Storage bucket for images embedded in articles (public read; the
 -- article page serves them straight from the Supabase CDN URL)
 insert into storage.buckets (id, name, public)

@@ -55,19 +55,14 @@ export const SITE_CONTENT_FIELDS: SiteContentField[] = [
   { key: 'articles_heading', label: 'Heading', group: 'Articles section', default: 'Latest Articles' },
   { key: 'articles_empty', label: 'Empty-state text', group: 'Articles section', default: 'Articles coming soon.' },
 
-  // Projects section
-  { key: 'projects_heading', label: 'Heading', group: 'Projects section', default: 'Projects' },
-  { key: 'projects_empty', label: 'Empty-state text', group: 'Projects section', default: 'Projects coming soon.' },
-
-  // Contact section
-  { key: 'contact_heading', label: 'Heading', group: 'Contact section', default: 'Contact' },
+  // Contact & social links
+  { key: 'github_url', label: 'GitHub URL', group: 'Contact & social links', default: 'https://github.com/HDAli00' },
+  { key: 'linkedin_url', label: 'LinkedIn URL', group: 'Contact & social links', default: 'https://linkedin.com/in/hdali' },
   {
-    key: 'contact_intro', label: 'Intro', group: 'Contact section', multiline: true,
-    default: "Got a question, a project, or want to talk platform engineering? I'm reachable — pick your channel.",
+    key: 'contact_email', label: 'Contact email', group: 'Contact & social links',
+    hint: 'Shown in the footer; contact-form messages are forwarded here.',
+    default: 'hello@hdalidocs.dev',
   },
-  { key: 'github_url', label: 'GitHub URL', group: 'Contact section', default: 'https://github.com/HDAli00' },
-  { key: 'linkedin_url', label: 'LinkedIn URL', group: 'Contact section', default: 'https://linkedin.com/in/hdali' },
-  { key: 'contact_email', label: 'Contact email', group: 'Contact section', default: 'hello@hdalidocs.dev' },
 
   // Writing page
   { key: 'writing_title', label: 'Page title', group: 'Writing page', default: 'Writing' },
@@ -81,6 +76,11 @@ export const SITE_CONTENT_FIELDS: SiteContentField[] = [
   },
 
   // Footer
+  { key: 'footer_heading', label: 'Reach-out heading', group: 'Footer', default: 'Reach out' },
+  {
+    key: 'footer_blurb', label: 'Reach-out intro', group: 'Footer', multiline: true,
+    default: 'Question, idea, or just want to talk platform engineering? Send a message — it lands straight in my inbox.',
+  },
   { key: 'footer_copyright', label: 'Copyright line', group: 'Footer', default: '© 2025 Hassan Ali' },
 ]
 

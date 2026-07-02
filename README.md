@@ -17,9 +17,9 @@ The app only needs the two env vars already in `.env.example` (`NEXT_PUBLIC_SUPA
 Visit `/admin`, sign in, and edit:
 
 - **Articles** — write, edit, publish/unpublish, and delete articles in a rich-text editor (headings, bold/italic, lists, quotes, code, links). Images inserted from the toolbar are uploaded to the `article-images` Supabase Storage bucket and served from its public CDN URL.
-- **Projects** — name, description, stack, GitHub link, ordering.
 - **Highlights** — the principles/field-notes index on the homepage.
-- **Site copy** — every fixed string: hero heading and typewriter phrases, section headings, contact links, writing-page intro, footer, and SEO titles/descriptions.
+- **Messages** — an inbox for messages sent from the footer contact form. Messages are always stored here; they are also forwarded by email (via formsubmit.co) to `CONTACT_FORM_EMAIL` if set, otherwise to the public contact email from Site copy. The first forwarded message triggers a one-time FormSubmit activation email — click the link in it once to start receiving messages.
+- **Site copy** — every fixed string: hero heading and typewriter phrases, section headings, social links, writing-page intro, footer reach-out text, and SEO titles/descriptions.
 
 Public pages are cached (ISR); saving in the admin revalidates them, so changes go live within seconds.
 

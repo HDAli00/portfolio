@@ -83,53 +83,6 @@ export async function deleteArticle(formData: FormData) {
   redirect('/admin/articles')
 }
 
-// ---------- Projects ----------
-
-export async function saveProject(_prev: ActionState, formData: FormData): Promise<ActionState> {
-  await requireUser()
-
-  const id = String(formData.get('id') ?? '')
-  const name = String(formData.get('name') ?? '').trim()
-  const description = String(formData.get('description') ?? '').trim()
-  const stack = String(formData.get('stack') ?? '')
-    .split(',')
-    .map(s => s.trim())
-    .filter(Boolean)
-  const githubUrl = String(formData.get('github_url') ?? '').trim()
-  const sortOrder = Number(formData.get('sort_order') ?? 0)
-
-  if (!name) return { error: 'Name is required.' }
-
-  const row = {
-    name,
-    description,
-    stack,
-    github_url: githubUrl,
-    sort_order: Number.isFinite(sortOrder) ? sortOrder : 0,
-  }
-
-  const supabase = await createSupabaseServerClient()
-  const { error } = id
-    ? await supabase.from('projects').update(row).eq('id', id)
-    : await supabase.from('projects').insert(row)
-  if (error) return { error: error.message }
-
-  revalidateSite()
-  redirect('/admin/projects')
-}
-
-export async function deleteProject(formData: FormData) {
-  await requireUser()
-  const id = String(formData.get('id') ?? '')
-  if (!id) return
-
-  const supabase = await createSupabaseServerClient()
-  await supabase.from('projects').delete().eq('id', id)
-
-  revalidateSite()
-  redirect('/admin/projects')
-}
-
 // ---------- Highlights ----------
 
 export async function saveHighlight(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -179,6 +132,19 @@ export async function deleteHighlight(formData: FormData) {
 
   revalidateSite()
   redirect('/admin/highlights')
+}
+
+// ---------- Contact messages ----------
+
+export async function deleteMessage(formData: FormData) {
+  await requireUser()
+  const id = String(formData.get('id') ?? '')
+  if (!id) return
+
+  const supabase = await createSupabaseServerClient()
+  await supabase.from('contact_messages').delete().eq('id', id)
+
+  redirect('/admin/messages')
 }
 
 // ---------- Site content ----------
