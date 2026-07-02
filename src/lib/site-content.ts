@@ -58,11 +58,6 @@ export const SITE_CONTENT_FIELDS: SiteContentField[] = [
   // Contact & social links
   { key: 'github_url', label: 'GitHub URL', group: 'Contact & social links', default: 'https://github.com/HDAli00' },
   { key: 'linkedin_url', label: 'LinkedIn URL', group: 'Contact & social links', default: 'https://linkedin.com/in/hdali' },
-  {
-    key: 'contact_email', label: 'Contact email', group: 'Contact & social links',
-    hint: 'Shown in the footer; contact-form messages are forwarded here.',
-    default: 'hello@example.com',
-  },
 
   // Writing page
   { key: 'writing_title', label: 'Page title', group: 'Writing page', default: 'Writing' },

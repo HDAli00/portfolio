@@ -38,7 +38,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form action={action} className="flex flex-col gap-4">
+    <form id="contact-form" action={action} className="flex flex-col gap-4">
       <label className="block">
         <span className="block text-[11px] font-mono uppercase tracking-[0.08em] text-[#999] mb-1.5">Subject</span>
         <input name="subject" required maxLength={200} placeholder="What's this about?" className={inputClass} />

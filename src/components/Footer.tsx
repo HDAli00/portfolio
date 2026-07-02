@@ -47,7 +47,7 @@ export default async function Footer() {
                 <path d={LINKEDIN_PATH} />
               </svg>
             </a>
-            <a href={`mailto:${content.contact_email}`} aria-label="Email" title="Email" className={socialLinkClass}>
+            <a href="#contact-form" aria-label="Send a message" title="Send a message" className={socialLinkClass}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px]" aria-hidden="true">
                 <rect x="2" y="4" width="20" height="16" rx="2" />
                 <path d="m22 7-10 6L2 7" />
@@ -61,9 +61,8 @@ export default async function Footer() {
       </div>
 
       <div className="border-t border-[#ececec]">
-        <div className="max-w-[850px] mx-auto px-12 py-6 flex items-center justify-between flex-wrap gap-2">
+        <div className="max-w-[850px] mx-auto px-12 py-6">
           <span className="text-[13px] text-[#999]">{content.footer_copyright}</span>
-          <span className="text-[13px] text-[#999]">{content.contact_email}</span>
         </div>
       </div>
     </footer>
