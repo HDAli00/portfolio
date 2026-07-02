@@ -4,6 +4,7 @@ import TechMarquee from '@/components/TechMarquee'
 import Highlights from '@/components/Highlights'
 import Footer from '@/components/Footer'
 import { getPublishedArticles, getProjects, getHighlights } from '@/lib/data'
+import { getSiteContent } from '@/lib/site-content'
 
 export const revalidate = 3600
 
@@ -16,27 +17,41 @@ function formatDate(iso: string) {
 }
 
 export default async function Home() {
-  const [articles, projects, highlights] = await Promise.all([
+  const [articles, projects, highlights, content] = await Promise.all([
     getPublishedArticles(),
     getProjects(),
     getHighlights(),
+    getSiteContent(),
   ])
+
+  const greetingPhrases = content.greeting_phrases
+    .split('\n')
+    .map(p => p.trim())
+    .filter(Boolean)
+  const heroHeadingLines = content.hero_heading.split('\n').filter(Boolean)
+
+  const contactLinks = [
+    { label: 'GitHub', href: content.github_url },
+    { label: 'LinkedIn', href: content.linkedin_url },
+    { label: content.contact_email, href: `mailto:${content.contact_email}` },
+  ]
 
   return (
     <>
       <main>
         {/* HERO */}
         <div className="max-w-[850px] mx-auto px-12 pt-[72px] pb-16">
-          <TypewriterGreeting />
+          <TypewriterGreeting prefix={content.greeting_prefix} phrases={greetingPhrases} />
           <h1 className="text-[clamp(36px,5vw,52px)] font-semibold leading-[1.18] tracking-[-0.025em] text-[#111] mb-6 max-w-[680px]">
-            I build platform infrastructure<br />
-            and write about engineering<br />
-            at scale.
+            {heroHeadingLines.map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < heroHeadingLines.length - 1 && <br />}
+              </span>
+            ))}
           </h1>
           <p className="text-[17px] leading-[1.75] text-[#666] max-w-[540px]">
-            Platform engineer at Capgemini, based in the Netherlands.
-            I work on observability, Kubernetes, cloud-native pipelines,
-            and the infrastructure other engineers rely on — quietly, reliably, at scale.
+            {content.hero_intro}
           </p>
         </div>
 
@@ -48,14 +63,19 @@ export default async function Home() {
         <hr className="max-w-[850px] mx-auto border-t border-[#ececec]" />
 
         {/* HIGHLIGHTS */}
-        <Highlights highlights={highlights} />
+        <Highlights
+          highlights={highlights}
+          eyebrow={content.highlights_eyebrow}
+          heading={content.highlights_heading}
+          intro={content.highlights_intro}
+        />
 
         <hr className="max-w-[850px] mx-auto border-t border-[#ececec]" />
 
         {/* ARTICLES */}
         <div className="max-w-[850px] mx-auto px-12 pt-16 pb-16">
           <div className="flex items-baseline justify-between mb-9">
-            <h2 className="text-[18px] font-semibold tracking-[-0.02em]">Latest Articles</h2>
+            <h2 className="text-[18px] font-semibold tracking-[-0.02em]">{content.articles_heading}</h2>
             <Link href="/writing" className="text-[13px] text-[#666] hover:text-[#111] transition-colors no-underline hover:no-underline">
               View all →
             </Link>
@@ -63,7 +83,7 @@ export default async function Home() {
 
           <div className="flex flex-col">
             {articles.length === 0 ? (
-              <p className="text-[15px] text-[#999] py-8">Articles coming soon.</p>
+              <p className="text-[15px] text-[#999] py-8">{content.articles_empty}</p>
             ) : (
               articles.slice(0, 4).map((article, i) => (
                 <Link
@@ -89,9 +109,9 @@ export default async function Home() {
         {/* PROJECTS */}
         <div className="max-w-[850px] mx-auto px-12 pt-16 pb-16">
           <div className="flex items-baseline justify-between mb-9">
-            <h2 className="text-[18px] font-semibold tracking-[-0.02em]">Projects</h2>
+            <h2 className="text-[18px] font-semibold tracking-[-0.02em]">{content.projects_heading}</h2>
             <a
-              href="https://github.com/HDAli00"
+              href={content.github_url}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[13px] text-[#666] hover:text-[#111] transition-colors no-underline hover:no-underline"
@@ -102,7 +122,7 @@ export default async function Home() {
 
           <div className="flex flex-col">
             {projects.length === 0 ? (
-              <p className="text-[15px] text-[#999] py-8">Projects coming soon.</p>
+              <p className="text-[15px] text-[#999] py-8">{content.projects_empty}</p>
             ) : (
               projects.map((project, i) => (
                 <a
@@ -129,17 +149,12 @@ export default async function Home() {
 
         {/* CONTACT */}
         <div className="max-w-[850px] mx-auto px-12 pt-16 pb-16" id="contact">
-          <h2 className="text-[18px] font-semibold tracking-[-0.02em] mb-9">Contact</h2>
+          <h2 className="text-[18px] font-semibold tracking-[-0.02em] mb-9">{content.contact_heading}</h2>
           <p className="text-[17px] leading-[1.75] text-[#666] max-w-[520px] mb-12">
-            Got a question, a project, or want to talk platform engineering?
-            I&apos;m reachable — pick your channel.
+            {content.contact_intro}
           </p>
           <div className="flex flex-col">
-            {[
-              { label: 'GitHub', href: 'https://github.com/HDAli00' },
-              { label: 'LinkedIn', href: 'https://linkedin.com/in/hdali' },
-              { label: 'hello@hdalidocs.dev', href: 'mailto:hello@hdalidocs.dev' },
-            ].map((item, i) => (
+            {contactLinks.map((item, i) => (
               <a
                 key={item.label}
                 href={item.href}

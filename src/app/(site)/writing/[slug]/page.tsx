@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Footer from '@/components/Footer'
 import { getArticleBySlug, getPublishedArticles } from '@/lib/data'
+import { getSiteContent } from '@/lib/site-content'
 import type { Metadata } from 'next'
 
 export const revalidate = 3600
@@ -17,10 +18,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params
-  const article = await getArticleBySlug(slug)
+  const [article, content] = await Promise.all([getArticleBySlug(slug), getSiteContent()])
   if (!article) return {}
   return {
-    title: `${article.title} — Hassan Ali`,
+    title: `${article.title} — ${content.site_title}`,
     description: article.description,
   }
 }

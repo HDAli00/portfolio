@@ -43,4 +43,5 @@ export type Highlight = {
   meta: string | null
   href: string
   sort_order: number
+  published?: boolean
 }

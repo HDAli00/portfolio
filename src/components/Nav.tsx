@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
-export default function Nav() {
+export default function Nav({ siteName = 'Hassan Ali' }: { siteName?: string }) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
@@ -13,7 +13,7 @@ export default function Nav() {
           href="/"
           className="text-[15px] font-semibold text-[#111] hover:opacity-70 transition-opacity no-underline hover:no-underline"
         >
-          Hassan Ali
+          {siteName}
         </Link>
 
         {/* Desktop links */}
