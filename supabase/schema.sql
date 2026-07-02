@@ -57,21 +57,21 @@ create policy "Public can read published highlights"
 
 -- Sample data
 insert into projects (name, description, stack, github_url, sort_order) values
-  ('otel-lab',                    'End-to-end OpenTelemetry pipeline — traces, metrics, and logs from a real service into Grafana.',      array['OpenTelemetry', 'Grafana', 'Docker'],         'https://github.com/HDAli00', 1),
+  ('otel-lab',                    'End-to-end OpenTelemetry pipeline: traces, metrics, and logs from a real service into Grafana.',      array['OpenTelemetry', 'Grafana', 'Docker'],         'https://github.com/HDAli00', 1),
   ('terraform-k8s-baseline',      'Opinionated Terraform modules for bootstrapping a production-grade Kubernetes cluster on AWS.',         array['Terraform', 'AWS', 'Kubernetes'],              'https://github.com/HDAli00', 2),
   ('databricks-pipeline-template','Reusable PySpark scaffolding with testing, lineage tracking, and CI hooks baked in.',                  array['PySpark', 'Databricks', 'GitHub Actions'],    'https://github.com/HDAli00', 3),
-  ('platform-agent',              'An AI assistant for platform engineers — answers infra questions grounded in your own runbooks.',       array['Python', 'LLM', 'RAG'],                       'https://github.com/HDAli00', 4);
+  ('platform-agent',              'An AI assistant for platform engineers that answers infra questions grounded in your own runbooks.',       array['Python', 'LLM', 'RAG'],                       'https://github.com/HDAli00', 4);
 
 insert into highlights (type, topic, title, blurb, meta, href, sort_order) values
   ('principle', 'Observability',
    'A system should tell you it''s sick before you have to ask it.',
-   'Replaced box-by-box SSH log-reading with a full telemetry stack deployed inside air-gapped VMs — one dashboard instead of the login-and-tail ritual.',
-   'OpenTelemetry · Grafana · Prometheus · ASML', '#', 1),
+   'Replaced box-by-box SSH log-reading with a full telemetry stack deployed inside air-gapped VMs: one dashboard instead of the login-and-tail ritual.',
+   'OpenTelemetry · Grafana · Prometheus · ASML', '/writing/opentelemetry-collector-production-architecture', 1),
   ('principle', 'Reproducibility',
    'If it only lives in the console, it doesn''t exist.',
-   'A three-tier AWS application defined end to end as code — standing it up or rebuilding from scratch is a command, not an act of memory.',
-   'ECS Fargate · RDS · ElastiCache · Terraform / Terragrunt', '#', 2),
+   'A three-tier AWS application defined end to end as code. Standing it up or rebuilding from scratch is a command, not an act of memory.',
+   'ECS Fargate · RDS · ElastiCache · Terraform / Terragrunt', '/writing/terraform-state-at-scale', 2),
   ('principle', 'Ephemerality',
    'Every run begins from nothing and leaves nothing behind.',
-   'A CI pipeline where each run gets a single-use pod and volume, wiped on exit — the clean-state guarantee that made self-service shipping safe.',
-   'Jenkins · Kubernetes · per-run PV teardown · ASML', '#', 3);
+   'A CI pipeline where each run gets a single-use pod and volume, wiped on exit: the clean-state guarantee that made self-service shipping safe.',
+   'Jenkins · Kubernetes · per-run PV teardown · ASML', '/writing/kubernetes-cpu-throttling-deep-dive', 3);

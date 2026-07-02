@@ -25,13 +25,11 @@ export type Article = {
   published: boolean
 }
 
-export type Project = {
+export type ContactMessage = {
   id: string
-  name: string
-  description: string
-  stack: string[]
-  github_url: string
-  sort_order: number
+  subject: string
+  message: string
+  created_at: string
 }
 
 export type Highlight = {
@@ -43,4 +41,5 @@ export type Highlight = {
   meta: string | null
   href: string
   sort_order: number
+  published?: boolean
 }

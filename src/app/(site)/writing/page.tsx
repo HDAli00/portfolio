@@ -1,13 +1,17 @@
 import Link from 'next/link'
 import Footer from '@/components/Footer'
 import { getPublishedArticles } from '@/lib/data'
+import { getSiteContent } from '@/lib/site-content'
 import type { Metadata } from 'next'
 
 export const revalidate = 3600
 
-export const metadata: Metadata = {
-  title: 'Writing — Hassan Ali',
-  description: 'Articles on platform engineering, observability, architecture, and systems design.',
+export async function generateMetadata(): Promise<Metadata> {
+  const content = await getSiteContent()
+  return {
+    title: `${content.writing_title} · ${content.site_title}`,
+    description: content.writing_meta_description,
+  }
 }
 
 function formatDate(iso: string) {
@@ -19,18 +23,17 @@ function formatDate(iso: string) {
 }
 
 export default async function WritingPage() {
-  const articles = await getPublishedArticles()
+  const [articles, content] = await Promise.all([getPublishedArticles(), getSiteContent()])
 
   return (
     <>
       <main>
         <div className="max-w-[850px] mx-auto px-12 pt-[72px] pb-16">
           <h1 className="text-[clamp(32px,4vw,44px)] font-semibold leading-[1.2] tracking-[-0.025em] text-[#111] mb-4">
-            Writing
+            {content.writing_title}
           </h1>
           <p className="text-[17px] leading-[1.75] text-[#666] max-w-[520px] mb-16">
-            Long-form articles on platform engineering, observability,
-            architecture, and systems design.
+            {content.writing_intro}
           </p>
 
           <div className="flex flex-col">

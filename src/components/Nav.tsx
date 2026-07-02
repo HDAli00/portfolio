@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 
-export default function Nav() {
+export default function Nav({ siteName = 'Hassan Ali' }: { siteName?: string }) {
   const [mobileOpen, setMobileOpen] = useState(false)
 
   return (
@@ -13,16 +13,13 @@ export default function Nav() {
           href="/"
           className="text-[15px] font-semibold text-[#111] hover:opacity-70 transition-opacity no-underline hover:no-underline"
         >
-          Hassan Ali
+          {siteName}
         </Link>
 
         {/* Desktop links */}
         <div className="hidden sm:flex items-center gap-7">
           <Link href="/writing" className="text-[14px] text-[#666] hover:text-[#111] transition-colors no-underline hover:no-underline">
             Writing
-          </Link>
-          <Link href="/projects" className="text-[14px] text-[#666] hover:text-[#111] transition-colors no-underline hover:no-underline">
-            Projects
           </Link>
           <Link href="/#contact" className="text-[14px] text-[#666] hover:text-[#111] transition-colors no-underline hover:no-underline">
             Contact
@@ -50,7 +47,6 @@ export default function Nav() {
       {mobileOpen && (
         <div className="sm:hidden border-t border-[#ececec] px-6 py-4 flex flex-col gap-4">
           <Link href="/writing" className="text-[14px] text-[#666]" onClick={() => setMobileOpen(false)}>Writing</Link>
-          <Link href="/projects" className="text-[14px] text-[#666]" onClick={() => setMobileOpen(false)}>Projects</Link>
           <Link href="/#contact" className="text-[14px] text-[#666]" onClick={() => setMobileOpen(false)}>Contact</Link>
         </div>
       )}

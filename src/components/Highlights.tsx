@@ -11,7 +11,17 @@ const LABELS: Record<Highlight['type'], string> = {
 
 const TYPES: Highlight['type'][] = ['principle', 'project', 'article']
 
-export default function Highlights({ highlights }: { highlights: Highlight[] }) {
+export default function Highlights({
+  highlights,
+  eyebrow = 'Field notes',
+  heading = 'What production taught me to hold as non-negotiable.',
+  intro = 'A running index of hard-earned principles, each one with a scar behind it.',
+}: {
+  highlights: Highlight[]
+  eyebrow?: string
+  heading?: string
+  intro?: string
+}) {
   const [active, setActive] = useState<'all' | Highlight['type']>('all')
 
   const present = TYPES.filter(t => highlights.some(h => h.type === t))
@@ -19,12 +29,12 @@ export default function Highlights({ highlights }: { highlights: Highlight[] }) 
 
   return (
     <div className="max-w-[850px] mx-auto px-12 pt-16 pb-16">
-      <p className="text-[13px] font-mono text-[#999] uppercase tracking-[0.02em] mb-4">Field notes</p>
+      <p className="text-[13px] font-mono text-[#999] uppercase tracking-[0.02em] mb-4">{eyebrow}</p>
       <h2 className="text-[clamp(28px,3.6vw,38px)] font-semibold leading-[1.18] tracking-[-0.025em] text-[#111] max-w-[22ch] mb-4">
-        What production taught me to hold as non-negotiable.
+        {heading}
       </h2>
       <p className="text-[17px] leading-[1.75] text-[#666] max-w-[560px] mb-9">
-        A running index of hard-earned principles — each one has a scar behind it.
+        {intro}
       </p>
 
       {present.length > 1 && (
@@ -33,7 +43,7 @@ export default function Highlights({ highlights }: { highlights: Highlight[] }) 
             onClick={() => setActive('all')}
             className={`text-[12px] font-mono tracking-[0.02em] rounded-full px-3.5 py-1.5 border transition-colors cursor-pointer ${
               active === 'all'
-                ? 'bg-[#111] text-white border-[#111]'
+                ? 'bg-(--accent) text-white border-(--accent)'
                 : 'text-[#666] border-[#ececec] hover:border-[#999] hover:text-[#111]'
             }`}
           >
@@ -45,7 +55,7 @@ export default function Highlights({ highlights }: { highlights: Highlight[] }) 
               onClick={() => setActive(t)}
               className={`text-[12px] font-mono tracking-[0.02em] rounded-full px-3.5 py-1.5 border transition-colors cursor-pointer ${
                 active === t
-                  ? 'bg-[#111] text-white border-[#111]'
+                  ? 'bg-(--accent) text-white border-(--accent)'
                   : 'text-[#666] border-[#ececec] hover:border-[#999] hover:text-[#111]'
               }`}
             >

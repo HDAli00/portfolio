@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-const PHRASES = [
+const DEFAULT_PHRASES = [
   '/hassan',
   '/platform-engineer',
   '/writer',
@@ -14,14 +14,21 @@ const DELETE_SPEED = 35
 const PAUSE_AFTER_TYPE = 1600
 const PAUSE_AFTER_DELETE = 300
 
-export default function TypewriterGreeting() {
-  const [displayed, setDisplayed] = useState(PHRASES[0])
+export default function TypewriterGreeting({
+  prefix = "Hi, I'm ",
+  phrases: phrasesProp,
+}: {
+  prefix?: string
+  phrases?: string[]
+}) {
+  const phrases = phrasesProp && phrasesProp.length > 0 ? phrasesProp : DEFAULT_PHRASES
+  const [displayed, setDisplayed] = useState(phrases[0])
   const [phraseIndex, setPhraseIndex] = useState(0)
-  const [charIndex, setCharIndex] = useState(PHRASES[0].length)
+  const [charIndex, setCharIndex] = useState(phrases[0].length)
   const [deleting, setDeleting] = useState(true)
 
   useEffect(() => {
-    const current = PHRASES[phraseIndex]
+    const current = phrases[phraseIndex % phrases.length]
 
     if (!deleting) {
       if (charIndex < current.length) {
@@ -42,7 +49,7 @@ export default function TypewriterGreeting() {
         }, DELETE_SPEED)
         return () => clearTimeout(t)
       } else {
-        const next = (phraseIndex + 1) % PHRASES.length
+        const next = (phraseIndex + 1) % phrases.length
         const t = setTimeout(() => {
           setPhraseIndex(next)
           setDeleting(false)
@@ -50,13 +57,13 @@ export default function TypewriterGreeting() {
         return () => clearTimeout(t)
       }
     }
-  }, [charIndex, deleting, phraseIndex])
+  }, [charIndex, deleting, phraseIndex, phrases])
 
   return (
     <p className="text-[15px] font-medium font-mono mb-5 tracking-tight">
-      <span className="text-[#111]">Hi, I&apos;m </span>
-      <span className="text-[#4f7ef8]">{displayed}</span>
-      <span className="inline-block w-[2px] h-[1em] bg-[#4f7ef8] ml-[1px] align-text-bottom cursor-blink" />
+      <span className="text-[#111]">{prefix}</span>
+      <span className="text-(--accent)">{displayed}</span>
+      <span className="inline-block w-[2px] h-[1em] bg-(--accent) ml-[1px] align-text-bottom cursor-blink" />
     </p>
   )
 }
