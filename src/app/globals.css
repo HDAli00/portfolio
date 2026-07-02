@@ -3,6 +3,13 @@
 :root {
   --background: #ffffff;
   --foreground: #111111;
+  /* Somali flag blue — the site's single accent color */
+  --accent: #4189DD;
+}
+
+::selection {
+  background: var(--accent);
+  color: #ffffff;
 }
 
 body {

@@ -43,7 +43,7 @@ export default function Highlights({
             onClick={() => setActive('all')}
             className={`text-[12px] font-mono tracking-[0.02em] rounded-full px-3.5 py-1.5 border transition-colors cursor-pointer ${
               active === 'all'
-                ? 'bg-[#111] text-white border-[#111]'
+                ? 'bg-(--accent) text-white border-(--accent)'
                 : 'text-[#666] border-[#ececec] hover:border-[#999] hover:text-[#111]'
             }`}
           >
@@ -55,7 +55,7 @@ export default function Highlights({
               onClick={() => setActive(t)}
               className={`text-[12px] font-mono tracking-[0.02em] rounded-full px-3.5 py-1.5 border transition-colors cursor-pointer ${
                 active === t
-                  ? 'bg-[#111] text-white border-[#111]'
+                  ? 'bg-(--accent) text-white border-(--accent)'
                   : 'text-[#666] border-[#ececec] hover:border-[#999] hover:text-[#111]'
               }`}
             >

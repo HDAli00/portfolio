@@ -62,8 +62,8 @@ export default function TypewriterGreeting({
   return (
     <p className="text-[15px] font-medium font-mono mb-5 tracking-tight">
       <span className="text-[#111]">{prefix}</span>
-      <span className="text-[#4f7ef8]">{displayed}</span>
-      <span className="inline-block w-[2px] h-[1em] bg-[#4f7ef8] ml-[1px] align-text-bottom cursor-blink" />
+      <span className="text-(--accent)">{displayed}</span>
+      <span className="inline-block w-[2px] h-[1em] bg-(--accent) ml-[1px] align-text-bottom cursor-blink" />
     </p>
   )
 }
